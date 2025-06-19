@@ -1,0 +1,14 @@
+{
+    "name": "pcb-openviewer",
+    "version": "1.0.0",
+    "description": "Standalone OpenGL-based PCB viewer for XZZPCB files",
+    "dependencies": [
+        "glfw3",
+        "glew",
+        "opengl",
+        {
+            "name": "imgui",
+            "features": ["glfw-binding", "opengl3-binding"]
+        }
+    ]
+}

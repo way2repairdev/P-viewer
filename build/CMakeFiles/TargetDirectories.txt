@@ -1,0 +1,3 @@
+C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/pcb_viewer.dir
+C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/ZERO_CHECK.dir

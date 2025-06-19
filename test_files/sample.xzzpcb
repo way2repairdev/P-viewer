@@ -1,0 +1,20 @@
+# Sample XZZPCB File for Testing
+
+This is a sample file to demonstrate the file open dialog functionality.
+While this is not a real XZZPCB file, it will show that the file open 
+dialog is working correctly.
+
+To test the PCB viewer:
+
+1. Run the pcb_viewer.exe
+2. Press Ctrl+O to open the file dialog
+3. Navigate to this file and try to open it
+4. The application will show an error (expected, since this isn't a real XZZPCB file)
+5. The demo/sample PCB data will continue to be displayed
+
+For real testing, you would need actual .xzzpcb files from PCB manufacturers.
+
+## Instructions:
+- Save this file as "sample.xzzpcb" to test the file dialog
+- The viewer supports DES-encrypted XZZPCB files
+- Use the mouse and keyboard controls to navigate the PCB view

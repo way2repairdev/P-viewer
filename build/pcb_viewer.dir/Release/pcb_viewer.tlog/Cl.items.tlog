@@ -1,0 +1,8 @@
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\core\BRDTypes.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\BRDTypes.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\core\Utils.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\Utils.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\formats\BRDFileBase.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\BRDFileBase.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\formats\XZZPCBFile.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\XZZPCBFile.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\formats\des.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\des.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\renderer\PCBRenderer.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\PCBRenderer.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\renderer\Window.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\Window.obj
+C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\src\main.cpp;C:\Users\Rathe\Downloads\boardviewer\OpenBoardView\openviewer\build\pcb_viewer.dir\Release\main.obj
