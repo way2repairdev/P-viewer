@@ -1,0 +1,68 @@
+cmake_minimum_required(VERSION 3.15)
+project(PCBOpenViewer VERSION 1.0.0)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Set up local vcpkg paths
+set(VCPKG_INSTALLED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/x64-windows")
+set(CMAKE_PREFIX_PATH "${VCPKG_INSTALLED_DIR};${VCPKG_INSTALLED_DIR}/share")
+
+# Add include directories
+include_directories("${VCPKG_INSTALLED_DIR}/include")
+link_directories("${VCPKG_INSTALLED_DIR}/lib")
+
+# Find OpenGL
+find_package(OpenGL REQUIRED)
+
+# Include directories
+include_directories(src)
+include_directories(src/core)
+include_directories(src/formats)
+include_directories(src/renderer)
+
+# Source files
+set(CORE_SOURCES
+    src/core/BRDTypes.cpp
+    src/core/Utils.cpp
+)
+
+set(FORMAT_SOURCES
+    src/formats/BRDFileBase.cpp
+    src/formats/XZZPCBFile.cpp
+    src/formats/des.cpp
+)
+
+set(RENDERER_SOURCES
+    src/renderer/PCBRenderer.cpp
+    src/renderer/Window.cpp
+)
+
+# Create executable
+add_executable(pcb_viewer
+    src/main.cpp
+    ${CORE_SOURCES}
+    ${FORMAT_SOURCES}
+    ${RENDERER_SOURCES}
+)
+
+# Link libraries directly
+target_link_libraries(pcb_viewer
+    ${OPENGL_LIBRARIES}
+    glfw3
+    glew32
+    imgui
+)
+
+# Set output directory
+set_target_properties(pcb_viewer PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Release"
+)
+
+# Copy DLLs to output directory
+add_custom_command(TARGET pcb_viewer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${VCPKG_INSTALLED_DIR}/bin/glfw3.dll"
+    "${VCPKG_INSTALLED_DIR}/bin/glew32.dll"
+    $<TARGET_FILE_DIR:pcb_viewer>
+)

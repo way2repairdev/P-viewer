@@ -24,9 +24,9 @@ events:
       The output was:
       0
       MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-      Build started 6/19/2025 4:44:37 PM.
+      Build started 6/20/2025 11:02:24 AM.
       
-      Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
+      Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
         Creating directory "Debug\\".
         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
@@ -38,19 +38,19 @@ events:
         Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
         Using normalized configuration "Release"
       VcpkgCheckManifestRoot:
-        The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
+        The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
       ClCompile:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TC /FC /errorReport:queue CMakeCCompilerId.c
         CMakeCCompilerId.c
       Link:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdC.lib" /MACHINE:X64 Debug\\CMakeCCompilerId.obj
-        CompilerIdC.vcxproj -> C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe
+        CompilerIdC.vcxproj -> C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe
       AppLocalFromInstalled:
-        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
         'pwsh.exe' is not recognized as an internal or external command,
         operable program or batch file.
-        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
-        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdC.tlog\\CompilerIdC.write.1u.tlog" "Debug\\vcpkg.applocal.log"
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
         :VCEnd
@@ -58,13 +58,13 @@ events:
       FinalizeBuildStatus:
         Deleting file "Debug\\CompilerIdC.tlog\\unsuccessfulbuild".
         Touching "Debug\\CompilerIdC.tlog\\CompilerIdC.lastbuildstate".
-      Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
+      Done Building Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdC\\CompilerIdC.vcxproj" (default targets).
       
       Build succeeded.
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:00.88
+      Time Elapsed 00:00:00.95
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -72,7 +72,7 @@ events:
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
       
       The C compiler identification is MSVC, found in:
-        C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/4.0.3/CompilerIdC/CompilerIdC.exe
+        C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/4.0.3/CompilerIdC/CompilerIdC.exe
       
   -
     kind: "message-v1"
@@ -90,9 +90,9 @@ events:
       The output was:
       0
       MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-      Build started 6/19/2025 4:44:38 PM.
+      Build started 6/20/2025 11:02:25 AM.
       
-      Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
+      Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" on node 1 (default targets).
       PrepareForBuild:
         Creating directory "Debug\\".
         Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
@@ -104,19 +104,19 @@ events:
         Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
         Using normalized configuration "Release"
       VcpkgCheckManifestRoot:
-        The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
+        The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
       ClCompile:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /nologo /W0 /WX- /diagnostics:column /Od /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\\\" /Fd"Debug\\vc143.pdb" /external:W0 /Gd /TP /FC /errorReport:queue CMakeCXXCompilerId.cpp
         CMakeCXXCompilerId.cpp
       Link:
         C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:".\\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\\CompilerIdCXX.lib" /MACHINE:X64 Debug\\CMakeCXXCompilerId.obj
-        CompilerIdCXX.vcxproj -> C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe
+        CompilerIdCXX.vcxproj -> C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe
       AppLocalFromInstalled:
-        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
         'pwsh.exe' is not recognized as an internal or external command,
         operable program or batch file.
-        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
-        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
+        The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"" exited with code 9009.
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\bin" "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.write.1u.tlog" "Debug\\vcpkg.applocal.log"
       PostBuildEvent:
         for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
         :VCEnd
@@ -124,13 +124,13 @@ events:
       FinalizeBuildStatus:
         Deleting file "Debug\\CompilerIdCXX.tlog\\unsuccessfulbuild".
         Touching "Debug\\CompilerIdCXX.tlog\\CompilerIdCXX.lastbuildstate".
-      Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
+      Done Building Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\4.0.3\\CompilerIdCXX\\CompilerIdCXX.vcxproj" (default targets).
       
       Build succeeded.
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:00.84
+      Time Elapsed 00:00:00.72
       
       
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
@@ -138,7 +138,7 @@ events:
       Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
       
       The CXX compiler identification is MSVC, found in:
-        C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/4.0.3/CompilerIdCXX/CompilerIdCXX.exe
+        C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/4.0.3/CompilerIdCXX/CompilerIdCXX.exe
       
   -
     kind: "try_compile-v1"
@@ -149,8 +149,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-1qv2ev"
-      binary: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-1qv2ev"
+      source: "C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-o6p9pj"
+      binary: "C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-o6p9pj"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -159,51 +159,51 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-1qv2ev'
+        Change Dir: 'C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-o6p9pj'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_e0276.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_d1638.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-        Build started 6/19/2025 4:44:39 PM.
+        Build started 6/20/2025 11:02:26 AM.
         
-        Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\cmTC_e0276.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\cmTC_d1638.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_e0276.dir\\Debug\\".
+          Creating directory "cmTC_d1638.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\Debug\\".
-          Creating directory "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\".
+          Creating directory "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\Debug\\".
+          Creating directory "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\unsuccessfulbuild".
+          Creating "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\unsuccessfulbuild".
         VcpkgTripletSelection:
           Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
           Using normalized configuration "Debug"
         VcpkgCheckManifestRoot:
-          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
+          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e0276.dir\\Debug\\\\" /Fd"cmTC_e0276.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_d1638.dir\\Debug\\\\" /Fd"cmTC_d1638.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35207.1 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_e0276.dir\\Debug\\\\" /Fd"cmTC_e0276.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCCompilerABI.c"
+          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_d1638.dir\\Debug\\\\" /Fd"cmTC_d1638.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\Debug\\cmTC_e0276.exe" /INCREMENTAL /ILK:"cmTC_e0276.dir\\Debug\\cmTC_e0276.ilk" /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-1qv2ev/Debug/cmTC_e0276.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-1qv2ev/Debug/cmTC_e0276.lib" /MACHINE:X64  /machine:x64 cmTC_e0276.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_e0276.vcxproj -> C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\Debug\\cmTC_e0276.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\Debug\\cmTC_d1638.exe" /INCREMENTAL /ILK:"cmTC_d1638.dir\\Debug\\cmTC_d1638.ilk" /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-o6p9pj/Debug/cmTC_d1638.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-o6p9pj/Debug/cmTC_d1638.lib" /MACHINE:X64  /machine:x64 cmTC_d1638.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_d1638.vcxproj -> C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\Debug\\cmTC_d1638.exe
         AppLocalFromInstalled:
-          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\Debug\\cmTC_e0276.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\cmTC_e0276.write.1u.tlog" "cmTC_e0276.dir\\Debug\\vcpkg.applocal.log"
+          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\Debug\\cmTC_d1638.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\cmTC_d1638.write.1u.tlog" "cmTC_d1638.dir\\Debug\\vcpkg.applocal.log"
           'pwsh.exe' is not recognized as an internal or external command,
           operable program or batch file.
-          The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\Debug\\cmTC_e0276.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\cmTC_e0276.write.1u.tlog" "cmTC_e0276.dir\\Debug\\vcpkg.applocal.log"" exited with code 9009.
-          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\Debug\\cmTC_e0276.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\cmTC_e0276.write.1u.tlog" "cmTC_e0276.dir\\Debug\\vcpkg.applocal.log"
+          The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\Debug\\cmTC_d1638.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\cmTC_d1638.write.1u.tlog" "cmTC_d1638.dir\\Debug\\vcpkg.applocal.log"" exited with code 9009.
+          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\Debug\\cmTC_d1638.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\cmTC_d1638.write.1u.tlog" "cmTC_d1638.dir\\Debug\\vcpkg.applocal.log"
         FinalizeBuildStatus:
-          Deleting file "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\unsuccessfulbuild".
-          Touching "cmTC_e0276.dir\\Debug\\cmTC_e0276.tlog\\cmTC_e0276.lastbuildstate".
-        Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-1qv2ev\\cmTC_e0276.vcxproj" (default targets).
+          Deleting file "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\unsuccessfulbuild".
+          Touching "cmTC_d1638.dir\\Debug\\cmTC_d1638.tlog\\cmTC_d1638.lastbuildstate".
+        Done Building Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-o6p9pj\\cmTC_d1638.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.80
+        Time Elapsed 00:00:00.71
         
       exitCode: 0
   -
@@ -243,8 +243,8 @@ events:
     checks:
       - "Detecting CXX compiler ABI info"
     directories:
-      source: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-29ljp8"
-      binary: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-29ljp8"
+      source: "C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-acdmag"
+      binary: "C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-acdmag"
     cmakeVariables:
       CMAKE_CXX_FLAGS: "/DWIN32 /D_WINDOWS /GR /EHsc"
       CMAKE_CXX_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -254,51 +254,51 @@ events:
       variable: "CMAKE_CXX_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-29ljp8'
+        Change Dir: 'C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-acdmag'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_b674b.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_13a12.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-        Build started 6/19/2025 4:44:40 PM.
+        Build started 6/20/2025 11:02:27 AM.
         
-        Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\cmTC_b674b.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\cmTC_13a12.vcxproj" on node 1 (default targets).
         PrepareForBuild:
-          Creating directory "cmTC_b674b.dir\\Debug\\".
+          Creating directory "cmTC_13a12.dir\\Debug\\".
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\Debug\\".
-          Creating directory "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\".
+          Creating directory "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\Debug\\".
+          Creating directory "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\unsuccessfulbuild".
+          Creating "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\unsuccessfulbuild".
         VcpkgTripletSelection:
           Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
           Using normalized configuration "Debug"
         VcpkgCheckManifestRoot:
-          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
+          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_b674b.dir\\Debug\\\\" /Fd"cmTC_b674b.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCXXCompilerABI.cpp"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_13a12.dir\\Debug\\\\" /Fd"cmTC_13a12.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCXXCompilerABI.cpp"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35207.1 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_b674b.dir\\Debug\\\\" /Fd"cmTC_b674b.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCXXCompilerABI.cpp"
+          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\\"Debug\\"" /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_13a12.dir\\Debug\\\\" /Fd"cmTC_13a12.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TP /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.0\\Modules\\CMakeCXXCompilerABI.cpp"
           CMakeCXXCompilerABI.cpp
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\Debug\\cmTC_b674b.exe" /INCREMENTAL /ILK:"cmTC_b674b.dir\\Debug\\cmTC_b674b.ilk" /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-29ljp8/Debug/cmTC_b674b.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-29ljp8/Debug/cmTC_b674b.lib" /MACHINE:X64  /machine:x64 cmTC_b674b.dir\\Debug\\CMakeCXXCompilerABI.obj
-          cmTC_b674b.vcxproj -> C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\Debug\\cmTC_b674b.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\Debug\\cmTC_13a12.exe" /INCREMENTAL /ILK:"cmTC_13a12.dir\\Debug\\cmTC_13a12.ilk" /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-acdmag/Debug/cmTC_13a12.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/CMakeScratch/TryCompile-acdmag/Debug/cmTC_13a12.lib" /MACHINE:X64  /machine:x64 cmTC_13a12.dir\\Debug\\CMakeCXXCompilerABI.obj
+          cmTC_13a12.vcxproj -> C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\Debug\\cmTC_13a12.exe
         AppLocalFromInstalled:
-          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\Debug\\cmTC_b674b.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\cmTC_b674b.write.1u.tlog" "cmTC_b674b.dir\\Debug\\vcpkg.applocal.log"
+          pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\Debug\\cmTC_13a12.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\cmTC_13a12.write.1u.tlog" "cmTC_13a12.dir\\Debug\\vcpkg.applocal.log"
           'pwsh.exe' is not recognized as an internal or external command,
           operable program or batch file.
-          The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\Debug\\cmTC_b674b.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\cmTC_b674b.write.1u.tlog" "cmTC_b674b.dir\\Debug\\vcpkg.applocal.log"" exited with code 9009.
-          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\Debug\\cmTC_b674b.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\cmTC_b674b.write.1u.tlog" "cmTC_b674b.dir\\Debug\\vcpkg.applocal.log"
+          The command "pwsh.exe -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\Debug\\cmTC_13a12.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\cmTC_13a12.write.1u.tlog" "cmTC_13a12.dir\\Debug\\vcpkg.applocal.log"" exited with code 9009.
+          "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe" -ExecutionPolicy Bypass -noprofile -File "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\scripts\\buildsystems\\msbuild\\applocal.ps1" "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\Debug\\cmTC_13a12.exe" "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\bin" "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\cmTC_13a12.write.1u.tlog" "cmTC_13a12.dir\\Debug\\vcpkg.applocal.log"
         FinalizeBuildStatus:
-          Deleting file "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\unsuccessfulbuild".
-          Touching "cmTC_b674b.dir\\Debug\\cmTC_b674b.tlog\\cmTC_b674b.lastbuildstate".
-        Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-29ljp8\\cmTC_b674b.vcxproj" (default targets).
+          Deleting file "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\unsuccessfulbuild".
+          Touching "cmTC_13a12.dir\\Debug\\cmTC_13a12.tlog\\cmTC_13a12.lastbuildstate".
+        Done Building Project "C:\\Users\\Rathe\\source\\repos\\way2repair\\P-viewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-acdmag\\cmTC_13a12.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:00.83
+        Time Elapsed 00:00:00.69
         
       exitCode: 0
   -
@@ -329,202 +329,4 @@ events:
       Running the CXX compiler's linker: "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
       Microsoft (R) Incremental Linker Version 14.44.35207.1
       Copyright (C) Microsoft Corporation.  All rights reserved.
-...
-
----
-events:
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/Internal/CheckSourceCompiles.cmake:104 (try_compile)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/CheckCSourceCompiles.cmake:58 (cmake_check_source_compiles)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/FindThreads.cmake:97 (check_c_source_compiles)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/FindThreads.cmake:163 (_threads_check_libc)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeFindDependencyMacro.cmake:78 (find_package)"
-      - "vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake:2 (find_dependency)"
-      - "CMakeLists.txt:9 (find_package)"
-    checks:
-      - "Performing Test CMAKE_HAVE_LIBC_PTHREAD"
-    directories:
-      source: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-vjftsb"
-      binary: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-vjftsb"
-    cmakeVariables:
-      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
-      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
-      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
-    buildResult:
-      variable: "CMAKE_HAVE_LIBC_PTHREAD"
-      cached: true
-      stdout: |
-        Change Dir: 'C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-vjftsb'
-        
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_cd354.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
-        MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-        Build started 6/19/2025 4:47:29 PM.
-        
-        Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\cmTC_cd354.vcxproj" on node 1 (default targets).
-        PrepareForBuild:
-          Creating directory "cmTC_cd354.dir\\Debug\\".
-          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\Debug\\".
-          Creating directory "cmTC_cd354.dir\\Debug\\cmTC_cd354.tlog\\".
-        InitializeBuildStatus:
-          Creating "cmTC_cd354.dir\\Debug\\cmTC_cd354.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_cd354.dir\\Debug\\cmTC_cd354.tlog\\unsuccessfulbuild".
-        VcpkgTripletSelection:
-          Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
-          Using normalized configuration "Debug"
-        VcpkgCheckManifestRoot:
-          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
-        ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cd354.dir\\Debug\\\\" /Fd"cmTC_cd354.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\src.c"
-          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35207.1 for x64
-          Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_cd354.dir\\Debug\\\\" /Fd"cmTC_cd354.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\src.c"
-          src.c
-        C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\src.c(1,10): error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\cmTC_cd354.vcxproj]
-        Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\cmTC_cd354.vcxproj" (default targets) -- FAILED.
-        
-        Build FAILED.
-        
-        "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\cmTC_cd354.vcxproj" (default target) (1) ->
-        (ClCompile target) -> 
-          C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\src.c(1,10): error C1083: Cannot open include file: 'pthread.h': No such file or directory [C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-vjftsb\\cmTC_cd354.vcxproj]
-        
-            0 Warning(s)
-            1 Error(s)
-        
-        Time Elapsed 00:00:00.30
-        
-      exitCode: 1
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/CheckLibraryExists.cmake:112 (try_compile)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/FindThreads.cmake:112 (check_library_exists)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/FindThreads.cmake:175 (_threads_check_lib)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeFindDependencyMacro.cmake:78 (find_package)"
-      - "vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake:2 (find_dependency)"
-      - "CMakeLists.txt:9 (find_package)"
-    checks:
-      - "Looking for pthread_create in pthreads"
-    directories:
-      source: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-tctoy5"
-      binary: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-tctoy5"
-    cmakeVariables:
-      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
-      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
-      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
-    buildResult:
-      variable: "CMAKE_HAVE_PTHREADS_CREATE"
-      cached: true
-      stdout: |
-        Change Dir: 'C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-tctoy5'
-        
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_df275.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
-        MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-        Build started 6/19/2025 4:47:29 PM.
-        
-        Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\cmTC_df275.vcxproj" on node 1 (default targets).
-        PrepareForBuild:
-          Creating directory "cmTC_df275.dir\\Debug\\".
-          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\Debug\\".
-          Creating directory "cmTC_df275.dir\\Debug\\cmTC_df275.tlog\\".
-        InitializeBuildStatus:
-          Creating "cmTC_df275.dir\\Debug\\cmTC_df275.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_df275.dir\\Debug\\cmTC_df275.tlog\\unsuccessfulbuild".
-        VcpkgTripletSelection:
-          Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
-          Using normalized configuration "Debug"
-        VcpkgCheckManifestRoot:
-          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
-        ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_df275.dir\\Debug\\\\" /Fd"cmTC_df275.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\CheckFunctionExists.c"
-          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35207.1 for x64
-          Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_df275.dir\\Debug\\\\" /Fd"cmTC_df275.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\CheckFunctionExists.c"
-          CheckFunctionExists.c
-        Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\Debug\\cmTC_df275.exe" /INCREMENTAL /ILK:"cmTC_df275.dir\\Debug\\cmTC_df275.ilk" /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" pthreads.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-tctoy5/Debug/cmTC_df275.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-tctoy5/Debug/cmTC_df275.lib" /MACHINE:X64  /machine:x64 cmTC_df275.dir\\Debug\\CheckFunctionExists.obj
-        LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\cmTC_df275.vcxproj]
-        Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\cmTC_df275.vcxproj" (default targets) -- FAILED.
-        
-        Build FAILED.
-        
-        "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\cmTC_df275.vcxproj" (default target) (1) ->
-        (Link target) -> 
-          LINK : fatal error LNK1104: cannot open file 'pthreads.lib' [C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-tctoy5\\cmTC_df275.vcxproj]
-        
-            0 Warning(s)
-            1 Error(s)
-        
-        Time Elapsed 00:00:00.39
-        
-      exitCode: 1
-  -
-    kind: "try_compile-v1"
-    backtrace:
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/CheckLibraryExists.cmake:112 (try_compile)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/FindThreads.cmake:112 (check_library_exists)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/FindThreads.cmake:176 (_threads_check_lib)"
-      - "C:/Program Files/CMake/share/cmake-4.0/Modules/CMakeFindDependencyMacro.cmake:78 (find_package)"
-      - "vcpkg_installed/x64-windows/share/glfw3/glfw3Config.cmake:2 (find_dependency)"
-      - "CMakeLists.txt:9 (find_package)"
-    checks:
-      - "Looking for pthread_create in pthread"
-    directories:
-      source: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-xt2e2e"
-      binary: "C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-xt2e2e"
-    cmakeVariables:
-      CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
-      CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
-      CMAKE_EXE_LINKER_FLAGS: "/machine:x64"
-    buildResult:
-      variable: "CMAKE_HAVE_PTHREAD_CREATE"
-      cached: true
-      stdout: |
-        Change Dir: 'C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-xt2e2e'
-        
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_aaf1a.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
-        MSBuild version 17.14.8+a7a4d5af0 for .NET Framework
-        Build started 6/19/2025 4:47:30 PM.
-        
-        Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\cmTC_aaf1a.vcxproj" on node 1 (default targets).
-        PrepareForBuild:
-          Creating directory "cmTC_aaf1a.dir\\Debug\\".
-          Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\Debug\\".
-          Creating directory "cmTC_aaf1a.dir\\Debug\\cmTC_aaf1a.tlog\\".
-        InitializeBuildStatus:
-          Creating "cmTC_aaf1a.dir\\Debug\\cmTC_aaf1a.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_aaf1a.dir\\Debug\\cmTC_aaf1a.tlog\\unsuccessfulbuild".
-        VcpkgTripletSelection:
-          Using triplet "x64-windows" from "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\"
-          Using normalized configuration "Debug"
-        VcpkgCheckManifestRoot:
-          The vcpkg manifest was disabled, but we found a manifest file in C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\. You may want to enable vcpkg manifests in your properties page or pass /p:VcpkgEnableManifest=true to the msbuild invocation.
-        ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_aaf1a.dir\\Debug\\\\" /Fd"cmTC_aaf1a.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\CheckFunctionExists.c"
-          Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35207.1 for x64
-          Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /I"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\include" /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_aaf1a.dir\\Debug\\\\" /Fd"cmTC_aaf1a.dir\\Debug\\vc143.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\CheckFunctionExists.c"
-          CheckFunctionExists.c
-        Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /ERRORREPORT:QUEUE /OUT:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\Debug\\cmTC_aaf1a.exe" /INCREMENTAL /ILK:"cmTC_aaf1a.dir\\Debug\\cmTC_aaf1a.ilk" /NOLOGO /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib" /LIBPATH:"C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\manual-link" pthread.lib kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\vcpkg\\installed\\x64-windows\\debug\\lib\\*.lib" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-xt2e2e/Debug/cmTC_aaf1a.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:/Users/Rathe/Downloads/boardviewer/OpenBoardView/openviewer/build/CMakeFiles/CMakeScratch/TryCompile-xt2e2e/Debug/cmTC_aaf1a.lib" /MACHINE:X64  /machine:x64 cmTC_aaf1a.dir\\Debug\\CheckFunctionExists.obj
-        LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\cmTC_aaf1a.vcxproj]
-        Done Building Project "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\cmTC_aaf1a.vcxproj" (default targets) -- FAILED.
-        
-        Build FAILED.
-        
-        "C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\cmTC_aaf1a.vcxproj" (default target) (1) ->
-        (Link target) -> 
-          LINK : fatal error LNK1104: cannot open file 'pthread.lib' [C:\\Users\\Rathe\\Downloads\\boardviewer\\OpenBoardView\\openviewer\\build\\CMakeFiles\\CMakeScratch\\TryCompile-xt2e2e\\cmTC_aaf1a.vcxproj]
-        
-            0 Warning(s)
-            1 Error(s)
-        
-        Time Elapsed 00:00:00.35
-        
-      exitCode: 1
 ...

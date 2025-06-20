@@ -157,10 +157,9 @@ private:
 
     bool LoadPCBFile(const std::string& filepath) {
         LOG_INFO("Loading PCB file: " + filepath);
-        
-        // Check file extension
+          // Check file extension
         std::string ext = Utils::ToLower(Utils::GetFileExtension(filepath));
-        if (ext != "xzz" && ext != "pcb") {
+        if (ext != "xzz" && ext != "pcb" && ext != "xzzpcb") {
             LOG_ERROR("Unsupported file format: " + ext);
             return false;
         }
