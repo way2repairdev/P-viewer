@@ -722,10 +722,9 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     }
 
     LOG_INFO("Rendering " + std::to_string(pcb_data->pins.size()) + " pins with ImGui");
-    
-    // Set pin colors - more similar to original OpenBoardView
-    ImU32 pin_fill_color = IM_COL32(255, 215, 0, 255);    // Gold/yellow
-    ImU32 pin_outline_color = IM_COL32(180, 140, 0, 255); // Darker gold
+      // Set pin colors - BLUE as requested
+    ImU32 pin_fill_color = IM_COL32(100, 150, 255, 255);    // Blue pin color
+    ImU32 pin_outline_color = IM_COL32(70, 120, 220, 255); // Darker blue outline
       for (const auto& pin : pcb_data->pins) {
         // Transform pin coordinates to screen space with Y-axis mirroring
         float x = pin.pos.x * zoom + offset_x;
@@ -741,53 +740,58 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             
             // Only draw outline if pins are large enough
             if (pin_radius > 1.5f) {
-                draw_list->AddCircle(ImVec2(x, y), pin_radius, pin_outline_color, 0, 1.0f);
-            }              // Add pin labels (name and net) if zoom level is sufficient
-            if (zoom > 0.5f && pin_radius > 2.0f) {
-                std::string label;
-                  // Logic to decide what to display on pins:
-                // Show both pin number and net name like OpenBoardView
-                // Format: "PIN_NUMBER\nNET_NAME" or just one if the other is missing
+                draw_list->AddCircle(ImVec2(x, y), pin_radius, pin_outline_color, 0, 1.0f);            }
+            
+            // Show BOTH pin number and net name INSIDE the pin circle (OpenBoardView style)
+            if (zoom > 0.3f && pin_radius > 8.0f) {
+                // Use smaller font size to fit both texts inside
+                ImGui::PushFont(nullptr); // Use default smaller font
                 
                 std::string pin_number = "";
                 std::string net_name = "";
                 
-                // Get pin number (prefer snum, fallback to name if it looks like a number)
+                // Get pin number
                 if (!pin.snum.empty()) {
                     pin_number = pin.snum;
                 } else if (!pin.name.empty()) {
                     pin_number = pin.name;
                 }
                 
-                // Get net name (prefer meaningful names, avoid generic NET_ patterns)
-                if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "" && 
-                    pin.net.substr(0, 4) != "NET_") {
-                    net_name = pin.net;
-                } else if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "") {
-                    net_name = pin.net;  // Show even generic NET_ names as fallback
+                // Get net name (prefer meaningful names)
+                if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "") {
+                    if (pin.net.substr(0, 4) != "NET_") {
+                        net_name = pin.net;  // Meaningful names (VCC, GND, etc.)
+                    } else {
+                        net_name = pin.net;  // Show generic NET_ names too
+                    }
                 }
                 
-                // Build the label - show both pin number and net name when available
-                if (!pin_number.empty() && !net_name.empty()) {
-                    label = pin_number + "\n" + net_name;  // Two-line format like OpenBoardView
-                } else if (!pin_number.empty()) {
-                    label = pin_number;  // Just pin number
-                } else if (!net_name.empty()) {
-                    label = net_name;    // Just net name
+                // Calculate text sizes for positioning
+                ImVec2 pin_text_size = pin_number.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(pin_number.c_str());
+                ImVec2 net_text_size = net_name.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(net_name.c_str());
+                
+                float text_spacing = 2.0f; // Space between pin number and net name
+                float total_text_height = pin_text_size.y + net_text_size.y + text_spacing;
+                
+                // Position pin number at TOP of circle (BLACK text)
+                if (!pin_number.empty()) {
+                    ImVec2 pin_text_pos(
+                        x - pin_text_size.x * 0.5f, 
+                        y - total_text_height * 0.5f
+                    );
+                    draw_list->AddText(pin_text_pos, IM_COL32(0, 0, 0, 255), pin_number.c_str());
                 }
                 
-                if (!label.empty()) {
-                    ImVec2 text_size = ImGui::CalcTextSize(label.c_str());
-                    ImVec2 text_pos(x - text_size.x * 0.5f, y - text_size.y * 0.5f);
-                    
-                    // Add text background for better readability
-                    ImVec2 bg_min = ImVec2(text_pos.x - 2, text_pos.y - 1);
-                    ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 2, text_pos.y + text_size.y + 1);
-                    draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 180));
-                    
-                    // Draw text in white
-                    draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), label.c_str());
+                // Position net name at BOTTOM of circle (RED text)
+                if (!net_name.empty()) {
+                    ImVec2 net_text_pos(
+                        x - net_text_size.x * 0.5f, 
+                        y - total_text_height * 0.5f + pin_text_size.y + text_spacing
+                    );
+                    draw_list->AddText(net_text_pos, IM_COL32(255, 0, 0, 255), net_name.c_str());
                 }
+                
+                ImGui::PopFont();
             }
         }
     }
