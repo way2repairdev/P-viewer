@@ -102,7 +102,7 @@ void PCBRenderer::Render(int window_width, int window_height) {
     }
 
     LOG_INFO("Rendering PCB with " + std::to_string(pcb_data->pins.size()) + " pins and " + std::to_string(pcb_data->outline_segments.size()) + " outline segments");    // Clear screen with PCB green background
-    glClearColor(0.0f, 0.4f, 0.0f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     // Initialize camera if needed (first time rendering)
@@ -604,8 +604,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             if (pin.part == i + 1) { // Parts are 1-indexed
                 part_pins.push_back(pin);
             }
-        }
-          if (part_pins.empty()) {
+        }        if (part_pins.empty()) {
             // Draw a simple rectangle for parts with no pins using part bounds
             float x1 = part.p1.x * zoom + offset_x;
             float y1 = offset_y - part.p1.y * zoom;  // Mirror Y
@@ -616,12 +615,27 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             if (y1 > y2) std::swap(y1, y2);  // Fix flipped Y coordinates
             
             if (x2 > x1 && y2 > y1) {
-                // Use blue color for components like original OpenBoardView
-                ImU32 part_fill_color = IM_COL32(100, 100, 200, 255);  // Blue
-                ImU32 part_outline_color = IM_COL32(150, 150, 255, 255);  // Light blue outline
+                // Use OpenBoardView-style gray color for components
+                ImU32 part_fill_color = IM_COL32(105, 105, 105, 255);  // Dim gray
+                ImU32 part_outline_color = IM_COL32(169, 169, 169, 255);  // Dark gray outline
                 
                 draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-                draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, 1.0f);
+                draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, 2.0f); // Thicker outline
+                  // Add component label - ONLY when zoomed in
+                if (zoom > 0.8f && !part.name.empty()) {  // Much higher threshold - only show when zoomed in
+                    float text_x = (x1 + x2) * 0.5f;
+                    float text_y = (y1 + y2) * 0.5f;
+                    
+                    ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
+                    ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
+                    
+                    // Add text background
+                    ImVec2 bg_min = ImVec2(text_pos.x - 2, text_pos.y - 1);
+                    ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 2, text_pos.y + text_size.y + 1);
+                    draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
+                    
+                    draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
+                }
             }
             continue;
         }
@@ -648,8 +662,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         
         // Ensure correct rectangle coordinates after Y mirroring
         if (y1 > y2) std::swap(y1, y2);
-        
-        // Choose component color based on type (like original OpenBoardView)
+          // Choose component colors to match OpenBoardView exactly
         ImU32 part_fill_color, part_outline_color;
         
         // Component type detection based on pin count and name
@@ -657,44 +670,43 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         char first_char = !part.name.empty() ? part.name[0] : 'X';
         
         if (first_char == 'U' || first_char == 'Q') {
-            // ICs - use blue/gray colors
+            // ICs - use OpenBoardView-style gray/blue colors
             if (pin_count >= 100) {
-                part_fill_color = IM_COL32(80, 80, 150, 255);     // Dark blue for large ICs
-                part_outline_color = IM_COL32(120, 120, 200, 255);
+                part_fill_color = IM_COL32(90, 90, 90, 0);      // Dark gray for large ICs
+                part_outline_color = IM_COL32(120, 120, 120, 255);
             } else if (pin_count >= 20) {
-                part_fill_color = IM_COL32(100, 100, 180, 255);   // Medium blue for medium ICs
-                part_outline_color = IM_COL32(140, 140, 220, 255);
+                part_fill_color = IM_COL32(110, 110, 110, 0);   // Medium gray for medium ICs
+                part_outline_color = IM_COL32(140, 140, 140, 255);
             } else {
-                part_fill_color = IM_COL32(120, 120, 200, 255);   // Light blue for small ICs
-                part_outline_color = IM_COL32(160, 160, 240, 255);
+                part_fill_color = IM_COL32(130, 130, 130, 0);   // Light gray for small ICs
+                part_outline_color = IM_COL32(160, 160, 160, 255);
             }
         } else if (first_char == 'R') {
-            // Resistors - use orange/brown
-            part_fill_color = IM_COL32(200, 120, 60, 255);     // Orange
-            part_outline_color = IM_COL32(240, 150, 80, 255);
+            // Resistors - use brown/tan like OpenBoardView
+            part_fill_color = IM_COL32(139, 69, 19, 0);      // Saddle brown
+            part_outline_color = IM_COL32(160, 82, 45, 255);   // Darker brown outline
         } else if (first_char == 'C') {
-            // Capacitors - use yellow/tan
-            part_fill_color = IM_COL32(200, 180, 100, 255);    // Yellow/tan
-            part_outline_color = IM_COL32(240, 220, 140, 255);
+            // Capacitors - use tan/beige like OpenBoardView
+            part_fill_color = IM_COL32(210, 180, 140, 0);    // Tan
+            part_outline_color = IM_COL32(139, 119, 101, 255); // Dark tan outline
         } else if (first_char == 'L') {
-            // Inductors - use purple
-            part_fill_color = IM_COL32(150, 90, 150, 255);     // Purple
-            part_outline_color = IM_COL32(180, 120, 180, 255);
+            // Inductors - use green like OpenBoardView
+            part_fill_color = IM_COL32(34, 139, 34, 0);      // Forest green
+            part_outline_color = IM_COL32(0, 100, 0, 255);     // Dark green outline
         } else if (first_char == 'D') {
-            // Diodes - use red
-            part_fill_color = IM_COL32(180, 80, 80, 255);      // Red
-            part_outline_color = IM_COL32(220, 120, 120, 255);
+            // Diodes - use red like OpenBoardView
+            part_fill_color = IM_COL32(178, 34, 34, 0);      // Fire brick red
+            part_outline_color = IM_COL32(139, 0, 0, 255);     // Dark red outline
         } else {
-            // Default components - use green
-            part_fill_color = IM_COL32(100, 150, 100, 255);    // Green
-            part_outline_color = IM_COL32(140, 190, 140, 255);
+            // Default components - use neutral gray like OpenBoardView
+            part_fill_color = IM_COL32(105, 105, 105, 0);    // Dim gray
+            part_outline_color = IM_COL32(169, 169, 169, 255); // Dark gray outline
         }
         
-        // Draw component body - solid colors like original OpenBoardView
+        // Draw component body with thicker outline like OpenBoardView
         draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, 1.0f);
-          // Add part name if zoom level is high enough
-        if (zoom > 0.3f && !part.name.empty()) {
+        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, 2.0f); // Thicker outline        // Add part name with OpenBoardView-style text rendering - ONLY when zoomed in
+        if (zoom > 0.8f && !part.name.empty()) {  // Much higher threshold - only show when zoomed in
             float text_x = (min_x + max_x) * 0.5f * zoom + offset_x;
             float text_y = offset_y - (min_y + max_y) * 0.5f * zoom;  // Mirror Y
             
@@ -702,11 +714,13 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
             ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
             
-            // Use contrasting text color
+            // Use high-contrast white text like OpenBoardView
             ImU32 text_color = IM_COL32(255, 255, 255, 255); // White text
-            if (part_fill_color == IM_COL32(200, 180, 100, 255)) { // Yellow components
-                text_color = IM_COL32(0, 0, 0, 255); // Black text for better contrast
-            }
+            
+            // Add text background for better readability like OpenBoardView
+            ImVec2 bg_min = ImVec2(text_pos.x - 2, text_pos.y - 1);
+            ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 2, text_pos.y + text_size.y + 1);
+            draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120)); // Semi-transparent black background
             
             draw_list->AddText(text_pos, text_color, part.name.c_str());
         }
@@ -729,21 +743,18 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         // Transform pin coordinates to screen space with Y-axis mirroring
         float x = pin.pos.x * zoom + offset_x;
         float y = offset_y - pin.pos.y * zoom;  // Mirror Y
-        
-        // Calculate pin size based on zoom - smaller pins like original
-        float pin_radius = std::max(1.0f, 2.5f * zoom);
+          // Calculate pin size based on zoom - LARGER pins for better visibility
+        float pin_radius = std::max(3.0f, 5.0f * zoom);  // Increased from 1.0f, 2.5f
         
         // Only draw pins if they're visible (not too small)
         if (pin_radius >= 0.5f) {
             // Draw pin as filled circle
             draw_list->AddCircleFilled(ImVec2(x, y), pin_radius, pin_fill_color);
-            
-            // Only draw outline if pins are large enough
-            if (pin_radius > 1.5f) {
-                draw_list->AddCircle(ImVec2(x, y), pin_radius, pin_outline_color, 0, 1.0f);            }
-            
-            // Show BOTH pin number and net name INSIDE the pin circle (OpenBoardView style)
-            if (zoom > 0.3f && pin_radius > 8.0f) {
+              // Only draw outline if pins are large enough
+            if (pin_radius > 2.0f) {  // Lower threshold for outlines
+                draw_list->AddCircle(ImVec2(x, y), pin_radius, pin_outline_color, 0, 1.5f);  // Slightly thicker outline
+            }            // Show BOTH pin number and net name INSIDE the pin circle - ONLY when zoomed in
+            if (zoom > 0.8f && pin_radius > 12.0f) {  // Higher threshold to match component names
                 // Use smaller font size to fit both texts inside
                 ImGui::PushFont(nullptr); // Use default smaller font
                 
