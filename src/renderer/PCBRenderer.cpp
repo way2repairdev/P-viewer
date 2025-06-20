@@ -733,27 +733,53 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     if (!pcb_data || pcb_data->pins.empty()) {
         LOG_INFO("No pins to render");
         return;
-    }
-
-    LOG_INFO("Rendering " + std::to_string(pcb_data->pins.size()) + " pins with ImGui");
-      // Set pin colors - BLUE as requested
+    }    LOG_INFO("Rendering " + std::to_string(pcb_data->pins.size()) + " pins with ImGui");
+    
+    // Set pin colors - BLUE as requested
     ImU32 pin_fill_color = IM_COL32(100, 150, 255, 255);    // Blue pin color
     ImU32 pin_outline_color = IM_COL32(70, 120, 220, 255); // Darker blue outline
-      for (const auto& pin : pcb_data->pins) {
+    
+    for (size_t pin_index = 0; pin_index < pcb_data->pins.size(); ++pin_index) {
+        const auto& pin = pcb_data->pins[pin_index];
         // Transform pin coordinates to screen space with Y-axis mirroring
         float x = pin.pos.x * zoom + offset_x;
         float y = offset_y - pin.pos.y * zoom;  // Mirror Y
           // Calculate pin size based on zoom - LARGER pins for better visibility
         float pin_radius = std::max(3.0f, 5.0f * zoom);  // Increased from 1.0f, 2.5f
         
+        // Determine pin colors based on selection state
+        ImU32 current_pin_fill_color = pin_fill_color;
+        ImU32 current_pin_outline_color = pin_outline_color;
+        float current_outline_thickness = 1.5f;
+        
+        // Check if this pin is selected - Yellow glowing effect
+        if (selected_pin_index == static_cast<int>(pin_index)) {
+            current_pin_fill_color = IM_COL32(255, 255, 100, 255);    // Bright yellow
+            current_pin_outline_color = IM_COL32(255, 215, 0, 255);   // Golden yellow
+            current_outline_thickness = 3.0f;  // Thicker outline for selection
+            
+            // Add glowing effect with multiple circles
+            float glow_radius = pin_radius + 2.0f;
+            draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 100), 0, 2.0f);
+            glow_radius = pin_radius + 4.0f;
+            draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 50), 0, 1.5f);
+        }
+        // Check if this pin is hovered
+        else if (hovered_pin_index == static_cast<int>(pin_index)) {
+            current_pin_fill_color = IM_COL32(150, 200, 255, 255);    // Light blue highlight
+            current_pin_outline_color = IM_COL32(100, 150, 255, 255); // Blue outline
+            current_outline_thickness = 2.0f;  // Slightly thicker for hover
+        }
+        
         // Only draw pins if they're visible (not too small)
         if (pin_radius >= 0.5f) {
             // Draw pin as filled circle
-            draw_list->AddCircleFilled(ImVec2(x, y), pin_radius, pin_fill_color);
-              // Only draw outline if pins are large enough
+            draw_list->AddCircleFilled(ImVec2(x, y), pin_radius, current_pin_fill_color);            // Only draw outline if pins are large enough
             if (pin_radius > 2.0f) {  // Lower threshold for outlines
-                draw_list->AddCircle(ImVec2(x, y), pin_radius, pin_outline_color, 0, 1.5f);  // Slightly thicker outline
-            }            // Show BOTH pin number and net name INSIDE the pin circle - ONLY when zoomed in
+                draw_list->AddCircle(ImVec2(x, y), pin_radius, current_pin_outline_color, 0, current_outline_thickness);
+            }
+            
+            // Show BOTH pin number and net name INSIDE the pin circle - ONLY when zoomed in
             if (zoom > 0.8f && pin_radius > 12.0f) {  // Higher threshold to match component names
                 // Use smaller font size to fit both texts inside
                 ImGui::PushFont(nullptr); // Use default smaller font
@@ -808,4 +834,90 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     }
     
     LOG_INFO("Completed pins rendering");
+}
+
+// Pin selection functionality
+bool PCBRenderer::HandleMouseClick(float screen_x, float screen_y, int window_width, int window_height) {
+    if (!pcb_data || pcb_data->pins.empty()) {
+        return false;
+    }
+    
+    // Convert screen coordinates to world coordinates
+    float world_x, world_y;
+    ScreenToWorld(screen_x, screen_y, world_x, world_y, window_width, window_height);
+    
+    // Check if click is near any pin
+    float click_radius = 20.0f / camera.zoom; // Adjust click tolerance based on zoom
+    
+    for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
+        const auto& pin = pcb_data->pins[i];
+        float dx = world_x - pin.pos.x;
+        float dy = world_y - pin.pos.y;
+        float distance = std::sqrt(dx * dx + dy * dy);
+        
+        // Calculate pin visual radius
+        float pin_radius = std::max(3.0f, 5.0f * camera.zoom) / camera.zoom;
+        
+        if (distance <= pin_radius + click_radius) {
+            // Pin clicked - toggle selection
+            if (selected_pin_index == static_cast<int>(i)) {
+                selected_pin_index = -1; // Deselect if already selected
+            } else {
+                selected_pin_index = static_cast<int>(i); // Select this pin
+            }
+            return true; // Consumed the click
+        }
+    }
+    
+    // Click on empty area - deselect
+    selected_pin_index = -1;
+    return false; // Click not consumed
+}
+
+void PCBRenderer::ClearSelection() {
+    selected_pin_index = -1;
+}
+
+int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width, int window_height) {
+    if (!pcb_data || pcb_data->pins.empty()) {
+        return -1;
+    }
+    
+    // Convert screen coordinates to world coordinates
+    float world_x, world_y;
+    ScreenToWorld(screen_x, screen_y, world_x, world_y, window_width, window_height);
+    
+    // Check if mouse is near any pin
+    float hover_radius = 15.0f / camera.zoom; // Slightly smaller than click radius
+    
+    for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
+        const auto& pin = pcb_data->pins[i];
+        float dx = world_x - pin.pos.x;
+        float dy = world_y - pin.pos.y;
+        float distance = std::sqrt(dx * dx + dy * dy);
+        
+        // Calculate pin visual radius
+        float pin_radius = std::max(3.0f, 5.0f * camera.zoom) / camera.zoom;
+        
+        if (distance <= pin_radius + hover_radius) {
+            return static_cast<int>(i);
+        }
+    }
+    
+    return -1; // No pin hovered
+}
+
+// Coordinate conversion methods
+void PCBRenderer::ScreenToWorld(float screen_x, float screen_y, float& world_x, float& world_y,
+                               int window_width, int window_height) {
+    // Convert screen coordinates to world coordinates using camera transform
+    world_x = camera.x + (screen_x - window_width * 0.5f) / camera.zoom;
+    world_y = camera.y + (window_height * 0.5f - screen_y) / camera.zoom;
+}
+
+void PCBRenderer::WorldToScreen(float world_x, float world_y, float& screen_x, float& screen_y,
+                               int window_width, int window_height) {
+    // Convert world coordinates to screen coordinates using camera transform
+    screen_x = (world_x - camera.x) * camera.zoom + window_width * 0.5f;
+    screen_y = window_height * 0.5f - (world_y - camera.y) * camera.zoom;
 }

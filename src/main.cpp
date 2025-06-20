@@ -97,6 +97,9 @@ public:
             // Render
             renderer.Render(window.GetWidth(), window.GetHeight());
             
+            // Display hover information if a pin is hovered
+            DisplayPinHoverInfo();
+            
             // Render ImGui
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -124,6 +127,13 @@ private:
     bool mouse_dragging = false;
     double last_mouse_x = 0.0;
     double last_mouse_y = 0.0;
+    
+    // Double-click detection for pin selection
+    double last_click_time = 0.0;
+    float last_click_x = 0.0f;
+    float last_click_y = 0.0f;
+    const double double_click_time = 0.5; // 500ms for double-click
+    const float double_click_distance = 10.0f; // 10 pixels tolerance
 
     // File dialog functions
     std::string OpenFileDialog() {
@@ -258,10 +268,43 @@ private:
         
         LOG_INFO("Sample PCB created with " + std::to_string(sample_pcb->parts.size()) + 
                 " parts and " + std::to_string(sample_pcb->pins.size()) + " pins");
-    }
-
-    void HandleInput() {
+    }    void HandleInput() {
         GLFWwindow* glfw_window = window.GetHandle();
+        
+        // Handle mouse input for selection and hover
+        double mouse_x, mouse_y;
+        glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
+          // Update hover state
+        int hovered_pin = renderer.GetHoveredPin(static_cast<float>(mouse_x), static_cast<float>(mouse_y), 
+                                                window.GetWidth(), window.GetHeight());
+        renderer.SetHoveredPin(hovered_pin);
+        
+        // Handle left mouse button for pin selection (double-click)
+        static bool left_mouse_pressed = false;
+        if (glfwGetMouseButton(glfw_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+            if (!left_mouse_pressed) {
+                left_mouse_pressed = true;
+                
+                // Check for double-click
+                double current_time = glfwGetTime();
+                float dx = static_cast<float>(mouse_x) - last_click_x;
+                float dy = static_cast<float>(mouse_y) - last_click_y;
+                float distance = std::sqrt(dx * dx + dy * dy);
+                
+                if ((current_time - last_click_time) <= double_click_time && distance <= double_click_distance) {
+                    // Double-click detected - handle pin selection
+                    renderer.HandleMouseClick(static_cast<float>(mouse_x), static_cast<float>(mouse_y),
+                                            window.GetWidth(), window.GetHeight());
+                }
+                
+                // Update click tracking
+                last_click_time = current_time;
+                last_click_x = static_cast<float>(mouse_x);
+                last_click_y = static_cast<float>(mouse_y);
+            }
+        } else {
+            left_mouse_pressed = false;
+        }
           // Handle keyboard input
         if (glfwGetKey(glfw_window, GLFW_KEY_R) == GLFW_PRESS) {
             // Reset view
@@ -280,10 +323,7 @@ private:
             ctrl_o_pressed = false;
         }
         
-        // Handle mouse input for panning and zooming
-        double mouse_x, mouse_y;
-        glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
-          // Mouse dragging for panning
+        // Mouse dragging for panning
         if (glfwGetMouseButton(glfw_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             if (!mouse_dragging) {
                 mouse_dragging = true;
@@ -316,7 +356,7 @@ private:
         } else {
             r_key_pressed = false;
         }
-    }    void OpenFile() {
+    }void OpenFile() {
         std::string filepath = OpenFileDialog();
         if (!filepath.empty()) {
             LOG_INFO("Opening file: " + filepath);            bool success = LoadPCBFile(filepath);
@@ -347,6 +387,89 @@ private:
         
         // Call zoom function with the world point that should stay under the cursor
         renderer.Zoom(zoom_factor, mouse_world_x, mouse_world_y);
+    }
+    
+    void DisplayPinHoverInfo() {
+        // Get current mouse position
+        double mouse_x, mouse_y;
+        glfwGetCursorPos(window.GetHandle(), &mouse_x, &mouse_y);
+        
+        // Check if any pin is hovered
+        int hovered_pin = renderer.GetHoveredPin(static_cast<float>(mouse_x), static_cast<float>(mouse_y),
+                                                window.GetWidth(), window.GetHeight());
+        
+        if (hovered_pin >= 0 && pcb_data && hovered_pin < static_cast<int>(pcb_data->pins.size())) {
+            const auto& pin = pcb_data->pins[hovered_pin];
+            
+            // Create hover tooltip
+            ImGui::SetNextWindowPos(ImVec2(static_cast<float>(mouse_x) + 15, static_cast<float>(mouse_y) + 15));
+            ImGui::SetNextWindowBgAlpha(0.9f); // Semi-transparent background
+            
+            if (ImGui::Begin("Pin Info", nullptr, 
+                           ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
+                           ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize |
+                           ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing)) {
+                
+                // Display pin information
+                ImGui::Text("Pin Information:");
+                ImGui::Separator();
+                
+                if (!pin.snum.empty()) {
+                    ImGui::Text("Pin Number: %s", pin.snum.c_str());
+                }
+                if (!pin.name.empty() && pin.name != pin.snum) {
+                    ImGui::Text("Pin Name: %s", pin.name.c_str());
+                }
+                if (!pin.net.empty()) {
+                    ImGui::Text("Net: %s", pin.net.c_str());
+                }
+                
+                ImGui::Text("Position: (%.1f, %.1f)", pin.pos.x, pin.pos.y);
+                ImGui::Text("Part: %d", pin.part);
+                
+                // Show selection status
+                if (renderer.GetSelectedPinIndex() == hovered_pin) {
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SELECTED");
+                } else {
+                    ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Double-click to select");
+                }
+                
+                ImGui::End();
+            }
+        }
+        
+        // Display selected pin information in a separate window
+        if (renderer.HasSelectedPin() && pcb_data) {
+            int selected_pin = renderer.GetSelectedPinIndex();
+            if (selected_pin >= 0 && selected_pin < static_cast<int>(pcb_data->pins.size())) {
+                const auto& pin = pcb_data->pins[selected_pin];
+                
+                ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+                if (ImGui::Begin("Selected Pin Details", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+                    ImGui::Text("Selected Pin:");
+                    ImGui::Separator();
+                    
+                    if (!pin.snum.empty()) {
+                        ImGui::Text("Pin Number: %s", pin.snum.c_str());
+                    }
+                    if (!pin.name.empty() && pin.name != pin.snum) {
+                        ImGui::Text("Pin Name: %s", pin.name.c_str());
+                    }
+                    if (!pin.net.empty()) {
+                        ImGui::Text("Net: %s", pin.net.c_str());
+                    }
+                    
+                    ImGui::Text("Position: (%.1f, %.1f)", pin.pos.x, pin.pos.y);
+                    ImGui::Text("Part: %d", pin.part);
+                    
+                    if (ImGui::Button("Clear Selection")) {
+                        renderer.ClearSelection();
+                    }
+                    
+                    ImGui::End();
+                }
+            }
+        }
     }
 };
 

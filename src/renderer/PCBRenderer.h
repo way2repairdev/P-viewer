@@ -60,6 +60,16 @@ public:
     void Pan(float dx, float dy);
     void Zoom(float factor, float center_x = 0.0f, float center_y = 0.0f);
     
+    // Pin selection functionality
+    bool HandleMouseClick(float screen_x, float screen_y, int window_width, int window_height);
+    void ClearSelection();
+    int GetSelectedPinIndex() const { return selected_pin_index; }
+    bool HasSelectedPin() const { return selected_pin_index >= 0; }
+    
+    // Hover functionality
+    int GetHoveredPin(float screen_x, float screen_y, int window_width, int window_height);
+    void SetHoveredPin(int pin_index) { hovered_pin_index = pin_index; }
+    
     // Settings
     RenderSettings& GetSettings() { return settings; }
     const Camera& GetCamera() const { return camera; }
@@ -74,6 +84,10 @@ private:
     std::shared_ptr<BRDFileBase> pcb_data;
     Camera camera;
     RenderSettings settings;
+    
+    // Selection state
+    int selected_pin_index = -1;  // -1 means no selection
+    int hovered_pin_index = -1;   // -1 means no hover
     
     // Shader compilation
     bool CreateShaderProgram();
