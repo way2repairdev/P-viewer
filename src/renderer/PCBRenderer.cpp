@@ -745,31 +745,36 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             }              // Add pin labels (name and net) if zoom level is sufficient
             if (zoom > 0.5f && pin_radius > 2.0f) {
                 std::string label;
+                  // Logic to decide what to display on pins:
+                // Show both pin number and net name like OpenBoardView
+                // Format: "PIN_NUMBER\nNET_NAME" or just one if the other is missing
                 
-                // Logic to decide what to display on pins:                // 1. If we have a meaningful net name (not generic NET_ pattern), show it
-                // 2. If we have a pin number/name, show it 
-                // 3. Fall back to any available identifier
-                  // Debug: Log pin label selection (only for first few pins to avoid spam)
-                static int debug_pin_count = 0;
-                if (debug_pin_count < 10) {
-                    std::cout << "PIN DEBUG " << debug_pin_count << " - net: '" << pin.net << "', snum: '" << pin.snum << "', name: '" << pin.name << "'" << std::endl;
-                }
+                std::string pin_number = "";
+                std::string net_name = "";
                 
-                if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "" && 
-                    pin.net.substr(0, 4) != "NET_" && pin.net != pin.snum) {
-                    label = pin.net;  // Show meaningful net name (VCC, GND, etc.)
-                    if (debug_pin_count < 10) std::cout << "  -> Using net name: '" << label << "'" << std::endl;
-                } else if (!pin.snum.empty()) {
-                    label = pin.snum;  // Show pin number (1, 2, 3, etc.)
-                    if (debug_pin_count < 10) std::cout << "  -> Using pin number: '" << label << "'" << std::endl;
+                // Get pin number (prefer snum, fallback to name if it looks like a number)
+                if (!pin.snum.empty()) {
+                    pin_number = pin.snum;
                 } else if (!pin.name.empty()) {
-                    label = pin.name;  // Show pin name as fallback
-                    if (debug_pin_count < 10) std::cout << "  -> Using pin name: '" << label << "'" << std::endl;
-                } else if (!pin.net.empty() && pin.net != "UNCONNECTED") {
-                    label = pin.net;  // Show any net name as last resort
-                    if (debug_pin_count < 10) std::cout << "  -> Using net as fallback: '" << label << "'" << std::endl;
+                    pin_number = pin.name;
                 }
-                debug_pin_count++;
+                
+                // Get net name (prefer meaningful names, avoid generic NET_ patterns)
+                if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "" && 
+                    pin.net.substr(0, 4) != "NET_") {
+                    net_name = pin.net;
+                } else if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "") {
+                    net_name = pin.net;  // Show even generic NET_ names as fallback
+                }
+                
+                // Build the label - show both pin number and net name when available
+                if (!pin_number.empty() && !net_name.empty()) {
+                    label = pin_number + "\n" + net_name;  // Two-line format like OpenBoardView
+                } else if (!pin_number.empty()) {
+                    label = pin_number;  // Just pin number
+                } else if (!net_name.empty()) {
+                    label = net_name;    // Just net name
+                }
                 
                 if (!label.empty()) {
                     ImVec2 text_size = ImGui::CalcTextSize(label.c_str());
