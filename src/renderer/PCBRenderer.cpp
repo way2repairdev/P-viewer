@@ -159,19 +159,28 @@ void PCBRenderer::Pan(float dx, float dy) {
 }
 
 void PCBRenderer::Zoom(float factor, float center_x, float center_y) {
-    // Zoom towards the specified center point
     float old_zoom = camera.zoom;
+    
+    // Apply zoom factor
     camera.zoom *= factor;
     
     // Limit zoom range
     if (camera.zoom < 0.01f) camera.zoom = 0.01f;
     if (camera.zoom > 100.0f) camera.zoom = 100.0f;
     
-    // Adjust camera position to zoom towards center
+    // If a center point is specified, adjust camera so that world point stays in same screen position
     if (center_x != 0.0f || center_y != 0.0f) {
-        float zoom_diff = 1.0f / camera.zoom - 1.0f / old_zoom;
-        camera.x += center_x * zoom_diff;
-        camera.y += center_y * zoom_diff;
+        // The idea: after zooming, we want center_x,center_y to appear at the same screen position
+        // Before zoom: screen_pos = (world_point - camera_old) * zoom_old
+        // After zoom: screen_pos = (world_point - camera_new) * zoom_new
+        // Since screen_pos should be the same: (center - old_camera) * old_zoom = (center - new_camera) * new_zoom
+        // Solving for new_camera: new_camera = center - (center - old_camera) * old_zoom / new_zoom
+        
+        float old_x = camera.x;
+        float old_y = camera.y;
+        
+        camera.x = center_x - (center_x - old_x) * old_zoom / camera.zoom;
+        camera.y = center_y - (center_y - old_y) * old_zoom / camera.zoom;
     }
 }
 
@@ -733,15 +742,47 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             // Only draw outline if pins are large enough
             if (pin_radius > 1.5f) {
                 draw_list->AddCircle(ImVec2(x, y), pin_radius, pin_outline_color, 0, 1.0f);
-            }
-            
-            // Add pin name only if zoom level is very high (pins are large)
-            if (zoom > 2.0f && !pin.name.empty() && pin_radius > 5.0f) {
-                ImVec2 text_size = ImGui::CalcTextSize(pin.name.c_str());
-                ImVec2 text_pos(x - text_size.x * 0.5f, y + pin_radius + 2.0f);
+            }              // Add pin labels (name and net) if zoom level is sufficient
+            if (zoom > 0.5f && pin_radius > 2.0f) {
+                std::string label;
                 
-                // Use small font for pin names
-                draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), pin.name.c_str());
+                // Logic to decide what to display on pins:                // 1. If we have a meaningful net name (not generic NET_ pattern), show it
+                // 2. If we have a pin number/name, show it 
+                // 3. Fall back to any available identifier
+                  // Debug: Log pin label selection (only for first few pins to avoid spam)
+                static int debug_pin_count = 0;
+                if (debug_pin_count < 10) {
+                    std::cout << "PIN DEBUG " << debug_pin_count << " - net: '" << pin.net << "', snum: '" << pin.snum << "', name: '" << pin.name << "'" << std::endl;
+                }
+                
+                if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "" && 
+                    pin.net.substr(0, 4) != "NET_" && pin.net != pin.snum) {
+                    label = pin.net;  // Show meaningful net name (VCC, GND, etc.)
+                    if (debug_pin_count < 10) std::cout << "  -> Using net name: '" << label << "'" << std::endl;
+                } else if (!pin.snum.empty()) {
+                    label = pin.snum;  // Show pin number (1, 2, 3, etc.)
+                    if (debug_pin_count < 10) std::cout << "  -> Using pin number: '" << label << "'" << std::endl;
+                } else if (!pin.name.empty()) {
+                    label = pin.name;  // Show pin name as fallback
+                    if (debug_pin_count < 10) std::cout << "  -> Using pin name: '" << label << "'" << std::endl;
+                } else if (!pin.net.empty() && pin.net != "UNCONNECTED") {
+                    label = pin.net;  // Show any net name as last resort
+                    if (debug_pin_count < 10) std::cout << "  -> Using net as fallback: '" << label << "'" << std::endl;
+                }
+                debug_pin_count++;
+                
+                if (!label.empty()) {
+                    ImVec2 text_size = ImGui::CalcTextSize(label.c_str());
+                    ImVec2 text_pos(x - text_size.x * 0.5f, y - text_size.y * 0.5f);
+                    
+                    // Add text background for better readability
+                    ImVec2 bg_min = ImVec2(text_pos.x - 2, text_pos.y - 1);
+                    ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 2, text_pos.y + text_size.y + 1);
+                    draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 180));
+                    
+                    // Draw text in white
+                    draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), label.c_str());
+                }
             }
         }
     }

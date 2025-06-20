@@ -135,8 +135,7 @@ private:
         ofn.lStructSize = sizeof(ofn);
         ofn.hwndOwner = glfwGetWin32Window(window.GetHandle());
         ofn.lpstrFile = szFile;
-        ofn.nMaxFile = sizeof(szFile);
-        ofn.lpstrFilter = L"XZZPCB Files\0*.xzzpcb\0All Files\0*.*\0";
+        ofn.nMaxFile = sizeof(szFile);        ofn.lpstrFilter = L"PCB Files\0*.xzzpcb;*.pcb;*.xzz\0XZZPCB Files\0*.xzzpcb;*.xzz\0PCB Files\0*.pcb\0All Files\0*.*\0";
         ofn.nFilterIndex = 1;
         ofn.lpstrFileTitle = NULL;
         ofn.nMaxFileTitle = 0;
@@ -216,27 +215,39 @@ private:
         part2.p1 = {6000, 4000};
         part2.p2 = {8000, 5000};
         sample_pcb->parts.push_back(part2);
+          // Sample pins with meaningful net names
+        std::vector<std::string> net_names = {"VCC", "GND", "LCD_VSN", "NET1816", "VPH_PWR", "SPMI_CLK", "SPMI_DATA", "UNCONNECTED"};
+        std::vector<std::string> net_names2 = {"NET1807", "NET1789", "VREG_L5_1P8", "GND", "LCD_VSN", "VPH_PWR"};
         
-        // Sample pins
+        // Debug: Log sample pin data
+        LOG_INFO("Creating sample pins with net names and pin numbers:");
+        
         for (int i = 0; i < 8; ++i) {
             BRDPin pin;
             pin.pos = {2000 + i * 250, 2000};
             pin.part = 0;
-            pin.name = std::to_string(i + 1);
-            pin.net = "NET_" + std::to_string(i);
+            pin.name = std::to_string(i + 1);  // Pin number
+            pin.net = (i < net_names.size()) ? net_names[i] : "NET_" + std::to_string(i);
+            pin.snum = std::to_string(i + 1);
             pin.radius = 50;
             sample_pcb->pins.push_back(pin);
+            
+            // Debug log each pin
+            LOG_INFO("Pin " + std::to_string(i+1) + ": name='" + pin.name + "', net='" + pin.net + "', snum='" + pin.snum + "'");
         }
-        
-        for (int i = 0; i < 6; ++i) {
+          for (int i = 0; i < 6; ++i) {
             BRDPin pin;
             pin.pos = {6000 + i * 300, 4000};
             pin.part = 1;
-            pin.name = std::to_string(i + 1);
-            pin.net = "NET_" + std::to_string(i + 8);
+            pin.name = std::to_string(i + 1);  // Pin number
+            pin.net = (i < net_names2.size()) ? net_names2[i] : "NET_" + std::to_string(i + 8);
+            pin.snum = std::to_string(i + 1);
             pin.radius = 60;
             sample_pcb->pins.push_back(pin);
-        }        // Validate and set data
+            
+            // Debug log each pin
+            LOG_INFO("Pin " + std::to_string(i+9) + ": name='" + pin.name + "', net='" + pin.net + "', snum='" + pin.snum + "'");
+        }// Validate and set data
         sample_pcb->SetValid(true);  // For demo data, we know it's valid
         
         pcb_data = std::static_pointer_cast<BRDFileBase>(sample_pcb);
@@ -272,9 +283,8 @@ private:
         // Handle mouse input for panning and zooming
         double mouse_x, mouse_y;
         glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
-        
-        // Mouse dragging for panning
-        if (glfwGetMouseButton(glfw_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+          // Mouse dragging for panning
+        if (glfwGetMouseButton(glfw_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             if (!mouse_dragging) {
                 mouse_dragging = true;
                 last_mouse_x = mouse_x;
@@ -315,9 +325,7 @@ private:
                 // The current PCB data remains displayed
             }
         }
-    }
-    
-    void HandleScroll(double xoffset, double yoffset) {
+    }    void HandleScroll(double xoffset, double yoffset) {
         // Get mouse position for zoom center
         double mouse_x, mouse_y;
         glfwGetCursorPos(window.GetHandle(), &mouse_x, &mouse_y);
@@ -326,20 +334,25 @@ private:
         int width, height;
         glfwGetFramebufferSize(window.GetHandle(), &width, &height);
         
-        // Convert mouse position to world coordinates for zoom center
+        // Get current camera state
         const auto& camera = renderer.GetCamera();
-        float world_x = (mouse_x - width * 0.5f) / camera.zoom + camera.x;
-        float world_y = (mouse_y - height * 0.5f) / camera.zoom + camera.y;
+        
+        // Calculate the world position under the mouse cursor BEFORE zooming
+        // This is the point that should remain stationary
+        float mouse_world_x = camera.x + (static_cast<float>(mouse_x) - width * 0.5f) / camera.zoom;
+        float mouse_world_y = camera.y + (height * 0.5f - static_cast<float>(mouse_y)) / camera.zoom;
         
         // Apply zoom
         float zoom_factor = 1.0f + static_cast<float>(yoffset) * 0.1f;
-        renderer.Zoom(zoom_factor, world_x, world_y);
+        
+        // Call zoom function with the world point that should stay under the cursor
+        renderer.Zoom(zoom_factor, mouse_world_x, mouse_world_y);
     }
 };
 
 int main(int argc, char* argv[]) {    std::cout << "PCB Viewer - XZZPCB Format Support" << std::endl;
     std::cout << "Controls:" << std::endl;
-    std::cout << "  Left Mouse Button + Drag: Pan view" << std::endl;
+    std::cout << "  Right Mouse Button + Drag: Pan view" << std::endl;
     std::cout << "  Mouse Wheel: Zoom in/out" << std::endl;
     std::cout << "  R Key: Reset view to fit PCB" << std::endl;
     std::cout << "  Ctrl+O: Open PCB file" << std::endl;

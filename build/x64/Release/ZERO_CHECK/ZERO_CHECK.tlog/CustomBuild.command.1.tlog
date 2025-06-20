@@ -1,0 +1,10 @@
+^C:\USERS\RATHE\SOURCE\REPOS\WAY2REPAIR\P-VIEWER\BUILD\CMAKEFILES\078AC84730BA54EA4771BA57BDABCB2F\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Rathe/source/repos/way2repair/P-viewer -BC:/Users/Rathe/source/repos/way2repair/P-viewer/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Rathe/source/repos/way2repair/P-viewer/build/PCBOpenViewer.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
