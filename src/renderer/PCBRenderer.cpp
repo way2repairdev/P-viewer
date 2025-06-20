@@ -751,14 +751,29 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         ImU32 current_pin_fill_color = pin_fill_color;
         ImU32 current_pin_outline_color = pin_outline_color;
         float current_outline_thickness = 1.5f;
-        
-        // Check if this pin is selected - Yellow glowing effect
+          // Check if this pin is selected - Yellow glowing effect
         if (selected_pin_index == static_cast<int>(pin_index)) {
             current_pin_fill_color = IM_COL32(255, 255, 100, 255);    // Bright yellow
             current_pin_outline_color = IM_COL32(255, 215, 0, 255);   // Golden yellow
             current_outline_thickness = 3.0f;  // Thicker outline for selection
             
             // Add glowing effect with multiple circles
+            float glow_radius = pin_radius + 2.0f;
+            draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 100), 0, 2.0f);
+            glow_radius = pin_radius + 4.0f;
+            draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 50), 0, 1.5f);
+        }
+        // Check if this pin is connected to the selected pin's net - Net highlighting
+        else if (selected_pin_index >= 0 && selected_pin_index < static_cast<int>(pcb_data->pins.size()) && 
+                 !pin.net.empty() && !pcb_data->pins[selected_pin_index].net.empty() &&
+                 pin.net == pcb_data->pins[selected_pin_index].net &&
+                 pin.net != "UNCONNECTED" && pin.net != "") {
+            // Same yellow color and glow effect as selected pin for connected net
+            current_pin_fill_color = IM_COL32(255, 255, 100, 255);    // Bright yellow
+            current_pin_outline_color = IM_COL32(255, 215, 0, 255);   // Golden yellow
+            current_outline_thickness = 3.0f;  // Thicker outline for net connection
+            
+            // Add glowing effect with multiple circles (same as selected pin)
             float glow_radius = pin_radius + 2.0f;
             draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 100), 0, 2.0f);
             glow_radius = pin_radius + 4.0f;

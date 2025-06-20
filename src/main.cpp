@@ -416,12 +416,26 @@ private:
                 
                 if (!pin.snum.empty()) {
                     ImGui::Text("Pin Number: %s", pin.snum.c_str());
-                }
-                if (!pin.name.empty() && pin.name != pin.snum) {
+                }                if (!pin.name.empty() && pin.name != pin.snum) {
                     ImGui::Text("Pin Name: %s", pin.name.c_str());
                 }
                 if (!pin.net.empty()) {
                     ImGui::Text("Net: %s", pin.net.c_str());
+                    
+                    // Count connected pins in the same net
+                    if (pin.net != "UNCONNECTED" && pin.net != "") {
+                        int connected_pins = 0;
+                        for (const auto& other_pin : pcb_data->pins) {
+                            if (other_pin.net == pin.net) {
+                                connected_pins++;
+                            }
+                        }
+                        ImGui::Text("Connected Pins: %d", connected_pins);
+                        if (connected_pins > 1) {
+                            ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
+                                             "Double-click to highlight net");
+                        }
+                    }
                 }
                 
                 ImGui::Text("Position: (%.1f, %.1f)", pin.pos.x, pin.pos.y);
@@ -454,9 +468,23 @@ private:
                     }
                     if (!pin.name.empty() && pin.name != pin.snum) {
                         ImGui::Text("Pin Name: %s", pin.name.c_str());
-                    }
-                    if (!pin.net.empty()) {
+                    }                    if (!pin.net.empty()) {
                         ImGui::Text("Net: %s", pin.net.c_str());
+                        
+                        // Show connected pins count for selected pin
+                        if (pin.net != "UNCONNECTED" && pin.net != "") {
+                            int connected_pins = 0;
+                            for (const auto& other_pin : pcb_data->pins) {
+                                if (other_pin.net == pin.net) {
+                                    connected_pins++;
+                                }
+                            }
+                            ImGui::Text("Total pins in net: %d", connected_pins);
+                            if (connected_pins > 1) {
+                                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
+                                                 "%d pins highlighted", connected_pins);
+                            }
+                        }
                     }
                     
                     ImGui::Text("Position: (%.1f, %.1f)", pin.pos.x, pin.pos.y);
