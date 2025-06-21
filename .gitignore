@@ -1,1 +1,43 @@
+# Build directories
+build/
+build-debug/
+Release/
+Debug/
+x64/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+*.vcxproj
+*.vcxproj.filters
+*.sln
+Makefile
+
+# Executables
 *.exe
+*.dll
+
+# IDE files
+.vs/
+.vscode/
+*.user
+*.suo
+*.sdf
+*.opensdf
+
+# Object files
+*.o
+*.obj
+
+# ImGui config
+imgui.ini
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*~
+*.tmp
+*.temp

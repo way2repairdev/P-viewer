@@ -5,13 +5,25 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set up local vcpkg paths
-set(VCPKG_INSTALLED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/x64-windows")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(VCPKG_TARGET_TRIPLET "x64-windows")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(VCPKG_TARGET_TRIPLET "x64-linux")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(VCPKG_TARGET_TRIPLET "x64-osx")
+endif()
+
+set(VCPKG_INSTALLED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}")
 set(CMAKE_PREFIX_PATH "${VCPKG_INSTALLED_DIR};${VCPKG_INSTALLED_DIR}/share")
 
 # Add include directories
 include_directories("${VCPKG_INSTALLED_DIR}/include")
 link_directories("${VCPKG_INSTALLED_DIR}/lib")
-link_directories("${VCPKG_INSTALLED_DIR}/debug/lib")
+
+# For debug builds, also add debug lib directory
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    link_directories("${VCPKG_INSTALLED_DIR}/debug/lib")
+endif()
 
 # Find packages
 find_package(OpenGL REQUIRED)
@@ -51,18 +63,36 @@ add_executable(pcb_viewer
     ${MAIN_SOURCES}
 )
 
-# Link libraries directly
+# Link libraries
 target_link_libraries(pcb_viewer
     ${OPENGL_LIBRARIES}
-    glfw3dll
-    glew32
-    imgui
 )
 
 # Platform-specific libraries
 if(WIN32)
     target_link_libraries(pcb_viewer
+        glfw3dll
+        glew32
+        imgui
         comdlg32
+    )
+elseif(UNIX AND NOT APPLE)
+    # Linux
+    target_link_libraries(pcb_viewer
+        glfw
+        GLEW
+        imgui
+        ${CMAKE_DL_LIBS}
+    )
+elseif(APPLE)
+    # macOS
+    target_link_libraries(pcb_viewer
+        glfw
+        GLEW
+        imgui
+        "-framework Cocoa"
+        "-framework IOKit"
+        "-framework CoreVideo"
     )
 endif()
 
