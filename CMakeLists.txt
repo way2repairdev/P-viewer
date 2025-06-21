@@ -106,3 +106,34 @@ endif()
 
 # Copy test files to build directory
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_files DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+# Copy required DLLs to output directory
+if(WIN32)
+    # Copy vcpkg DLLs to the output directory
+    set(VCPKG_BIN_DIR "${VCPKG_INSTALLED_DIR}/bin")
+    
+    # List of required DLLs
+    set(REQUIRED_DLLS
+        "${VCPKG_BIN_DIR}/glew32.dll"
+        "${VCPKG_BIN_DIR}/glfw3.dll"
+    )
+    
+    # Copy DLLs to both Debug and Release directories
+    foreach(DLL_FILE ${REQUIRED_DLLS})
+        if(EXISTS ${DLL_FILE})
+            file(COPY ${DLL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug)
+            file(COPY ${DLL_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Release)
+        endif()
+    endforeach()
+    
+    # Also copy DLLs using a custom target that runs after build
+    add_custom_command(TARGET pcb_viewer POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${VCPKG_BIN_DIR}/glew32.dll"
+        $<TARGET_FILE_DIR:pcb_viewer>
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${VCPKG_BIN_DIR}/glfw3.dll"
+        $<TARGET_FILE_DIR:pcb_viewer>
+        COMMENT "Copying required DLLs to output directory"
+    )
+endif()
