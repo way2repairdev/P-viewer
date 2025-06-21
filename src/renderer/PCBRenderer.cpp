@@ -857,9 +857,8 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             draw_list->AddCircleFilled(ImVec2(x, y), pin_radius, current_pin_fill_color);            // Only draw outline if pins are large enough
             if (pin_radius > 2.0f) {  // Lower threshold for outlines
                 draw_list->AddCircle(ImVec2(x, y), pin_radius, current_pin_outline_color, 0, current_outline_thickness);
-            }
-              // Show BOTH pin number and net name INSIDE the pin circle - adaptive threshold
-            if (pin_radius > 12.0f) {  // Show text when pin is large enough on screen
+            }            // Show pin number and net name INSIDE the pin circle - adaptive and properly sized
+            if (pin_radius > 8.0f) {  // Only show text when pin is large enough (reduced threshold)
                 // Use smaller font size to fit both texts inside
                 ImGui::PushFont(nullptr); // Use default smaller font
                 
@@ -882,29 +881,64 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
                     }
                 }
                 
+                // Calculate maximum text width that fits in pin circle (with margin)
+                float max_text_width = pin_radius * 1.6f;  // Use 80% of diameter
+                
                 // Calculate text sizes for positioning
                 ImVec2 pin_text_size = pin_number.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(pin_number.c_str());
                 ImVec2 net_text_size = net_name.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(net_name.c_str());
                 
-                float text_spacing = 2.0f; // Space between pin number and net name
-                float total_text_height = pin_text_size.y + net_text_size.y + text_spacing;
+                // Only show text if it fits within the pin circle
+                bool show_pin_text = !pin_number.empty() && pin_text_size.x <= max_text_width;
+                bool show_net_text = !net_name.empty() && net_text_size.x <= max_text_width;
                 
-                // Position pin number at TOP of circle (BLACK text)
-                if (!pin_number.empty()) {
-                    ImVec2 pin_text_pos(
-                        x - pin_text_size.x * 0.5f, 
-                        y - total_text_height * 0.5f
+                if (show_pin_text || show_net_text) {
+                    // Clip text rendering to pin circle
+                    draw_list->PushClipRect(
+                        ImVec2(x - pin_radius, y - pin_radius), 
+                        ImVec2(x + pin_radius, y + pin_radius), 
+                        true
                     );
-                    draw_list->AddText(pin_text_pos, IM_COL32(0, 0, 0, 255), pin_number.c_str());
-                }
-                
-                // Position net name at BOTTOM of circle (RED text)
-                if (!net_name.empty()) {
-                    ImVec2 net_text_pos(
-                        x - net_text_size.x * 0.5f, 
-                        y - total_text_height * 0.5f + pin_text_size.y + text_spacing
-                    );
-                    draw_list->AddText(net_text_pos, IM_COL32(255, 0, 0, 255), net_name.c_str());
+                    
+                    float text_spacing = 1.0f; // Reduced spacing between pin number and net name
+                    
+                    if (show_pin_text && show_net_text) {
+                        // Both texts - stack them vertically
+                        float total_text_height = pin_text_size.y + net_text_size.y + text_spacing;
+                        
+                        // Position pin number at TOP of circle (WHITE text for better contrast)
+                        ImVec2 pin_text_pos(
+                            x - pin_text_size.x * 0.5f, 
+                            y - total_text_height * 0.5f
+                        );
+                        draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), pin_number.c_str());
+                        
+                        // Position net name at BOTTOM of circle (YELLOW text for visibility)
+                        ImVec2 net_text_pos(
+                            x - net_text_size.x * 0.5f, 
+                            y - total_text_height * 0.5f + pin_text_size.y + text_spacing
+                        );
+                        draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), net_name.c_str());
+                    }
+                    else if (show_pin_text) {
+                        // Only pin number - center it
+                        ImVec2 pin_text_pos(
+                            x - pin_text_size.x * 0.5f, 
+                            y - pin_text_size.y * 0.5f
+                        );
+                        draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), pin_number.c_str());
+                    }
+                    else if (show_net_text) {
+                        // Only net name - center it
+                        ImVec2 net_text_pos(
+                            x - net_text_size.x * 0.5f, 
+                            y - net_text_size.y * 0.5f
+                        );
+                        draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), net_name.c_str());
+                    }
+                    
+                    // Restore clipping
+                    draw_list->PopClipRect();
                 }
                 
                 ImGui::PopFont();
