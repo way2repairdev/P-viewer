@@ -774,12 +774,11 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     if (!pcb_data || pcb_data->pins.empty()) {
         LOG_INFO("No pins to render");
         return;
-    }
-    // Pins rendering
+    }    // Pins rendering
     
-    // Set pin colors - BLUE as requested
-    ImU32 pin_fill_color = IM_COL32(100, 150, 255, 255);    // Blue pin color
-    ImU32 pin_outline_color = IM_COL32(70, 120, 220, 255); // Darker blue outline
+    // Set pin colors - RED as requested
+    ImU32 pin_fill_color = IM_COL32(255, 100, 100, 255);    // Red pin color
+    ImU32 pin_outline_color = IM_COL32(220, 70, 70, 255);   // Darker red outline
     
     for (size_t pin_index = 0; pin_index < pcb_data->pins.size(); ++pin_index) {
         const auto& pin = pcb_data->pins[pin_index];
@@ -826,11 +825,10 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 100), 0, 2.0f);
             glow_radius = pin_radius + 4.0f;
             draw_list->AddCircle(ImVec2(x, y), glow_radius, IM_COL32(255, 255, 0, 50), 0, 1.5f);
-        }
-        // Check if this pin is hovered
+        }        // Check if this pin is hovered
         else if (hovered_pin_index == static_cast<int>(pin_index)) {
-            current_pin_fill_color = IM_COL32(150, 200, 255, 255);    // Light blue highlight
-            current_pin_outline_color = IM_COL32(100, 150, 255, 255); // Blue outline
+            current_pin_fill_color = IM_COL32(255, 150, 150, 255);    // Light red highlight
+            current_pin_outline_color = IM_COL32(255, 100, 100, 255); // Red outline
             current_outline_thickness = 2.0f;  // Slightly thicker for hover
         }
         
