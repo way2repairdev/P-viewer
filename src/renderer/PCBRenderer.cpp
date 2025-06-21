@@ -4,6 +4,7 @@
 #include <cmath>
 #include <vector>
 #include <imgui.h>
+#include <cctype>
 
 // Simple vertex shader
 const char* vertex_shader_source = R"(
@@ -789,6 +790,26 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
     // Parts rendering complete
 }
 
+bool PCBRenderer::IsGroundPin(const BRDPin& pin) {
+    // Check if pin is a ground pin based on net name
+    if (pin.net.empty()) return false;
+    
+    std::string net_upper = pin.net;
+    // Convert to uppercase for case-insensitive comparison
+    std::transform(net_upper.begin(), net_upper.end(), net_upper.begin(), ::toupper);
+    
+    // Common ground net names
+    return (net_upper == "GND" || 
+            net_upper == "GROUND" || 
+            net_upper == "VSS" || 
+            net_upper == "AGND" || 
+            net_upper == "DGND" || 
+            net_upper == "PGND" || 
+            net_upper == "SGND" || 
+            net_upper.find("GND") == 0 ||  // Starts with GND (GND1, GND2, etc.)
+            net_upper.find("GROUND") == 0); // Starts with GROUND
+}
+
 void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->pins.empty()) {
         LOG_INFO("No pins to render");
@@ -796,27 +817,46 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     }    // Pins rendering
     
     // Set pin colors - RED as requested
-    ImU32 pin_fill_color = IM_COL32(255, 100, 100, 255);    // Red pin color
-    ImU32 pin_outline_color = IM_COL32(220, 70, 70, 255);   // Darker red outline
+    ImU32 pin_fill_color = IM_COL32(150, 0, 0, 255);    // maroon pin color
+    ImU32 pin_outline_color = IM_COL32(150, 0, 0, 255);   // Darker red outline
+    
+    // Ground pin colors (gray and non-selectable)
+    ImU32 ground_pin_fill_color = IM_COL32(120, 120, 120, 255);    // Gray
+    ImU32 ground_pin_outline_color = IM_COL32(80, 80, 80, 255);    // Dark gray
     
     for (size_t pin_index = 0; pin_index < pcb_data->pins.size(); ++pin_index) {
         const auto& pin = pcb_data->pins[pin_index];
         // Transform pin coordinates to screen space with Y-axis mirroring
         float x = pin.pos.x * zoom + offset_x;
         float y = offset_y - pin.pos.y * zoom;  // Mirror Y        // Calculate pin size based on zoom with minimum size for visibility
-        float base_pin_size = 5.0f;  // Base pin size in world units
+        float base_pin_size = 7.5f;  // Base pin size in world units
         float screen_pin_size = base_pin_size * zoom;  // Size in screen pixels
         
         // Ensure pins are always visible with minimum screen size
         float min_screen_size = 2.0f;  // Minimum 2 pixels
-        float max_screen_size = 20.0f; // Maximum 20 pixels to prevent huge pins
+        float max_screen_size = 500.0f; // Maximum 20 pixels to prevent huge pins
+          float pin_radius = std::max(min_screen_size, std::min(max_screen_size, screen_pin_size));
         
-        float pin_radius = std::max(min_screen_size, std::min(max_screen_size, screen_pin_size));
+        // Check if this is a ground pin
+        bool is_ground_pin = IsGroundPin(pin);
         
-        // Determine pin colors based on selection state
-        ImU32 current_pin_fill_color = pin_fill_color;
-        ImU32 current_pin_outline_color = pin_outline_color;
+        // Determine pin colors based on selection state and pin type
+        ImU32 current_pin_fill_color;
+        ImU32 current_pin_outline_color;
         float current_outline_thickness = 1.5f;
+          if (is_ground_pin) {
+            // Ground pins are always gray and cannot be selected
+            current_pin_fill_color = ground_pin_fill_color;
+            current_pin_outline_color = ground_pin_outline_color;
+            current_outline_thickness = 1.0f;  // Thinner outline for ground pins
+        } else {
+            // Regular pins use normal coloring
+            current_pin_fill_color = pin_fill_color;
+            current_pin_outline_color = pin_outline_color;
+        }
+        
+        // Apply selection/hover effects only to non-ground pins
+        if (!is_ground_pin) {
           // Check if this pin is selected - Yellow glowing effect
         if (selected_pin_index == static_cast<int>(pin_index)) {
             current_pin_fill_color = IM_COL32(255, 255, 100, 255);    // Bright yellow
@@ -847,9 +887,9 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         }        // Check if this pin is hovered
         else if (hovered_pin_index == static_cast<int>(pin_index)) {
             current_pin_fill_color = IM_COL32(255, 150, 150, 255);    // Light red highlight
-            current_pin_outline_color = IM_COL32(255, 100, 100, 255); // Red outline
-            current_outline_thickness = 2.0f;  // Slightly thicker for hover
+            current_pin_outline_color = IM_COL32(255, 100, 100, 255); // Red outline            current_outline_thickness = 2.0f;  // Slightly thicker for hover
         }
+        } // End of if (!is_ground_pin) block
         
         // Only draw pins if they're visible (not too small)
         if (pin_radius >= 0.5f) {
@@ -958,12 +998,17 @@ bool PCBRenderer::HandleMouseClick(float screen_x, float screen_y, int window_wi
     // Convert screen coordinates to world coordinates
     float world_x, world_y;
     ScreenToWorld(screen_x, screen_y, world_x, world_y, window_width, window_height);
-    
-    // Check if click is near any pin
+      // Check if click is near any pin
     float click_radius = 20.0f / camera.zoom; // Adjust click tolerance based on zoom
     
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
+        
+        // Skip ground pins - they are not selectable
+        if (IsGroundPin(pin)) {
+            continue;
+        }
+        
         float dx = world_x - pin.pos.x;
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);
@@ -999,12 +1044,17 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
     // Convert screen coordinates to world coordinates
     float world_x, world_y;
     ScreenToWorld(screen_x, screen_y, world_x, world_y, window_width, window_height);
-    
-    // Check if mouse is near any pin
+      // Check if mouse is near any pin
     float hover_radius = 15.0f / camera.zoom; // Slightly smaller than click radius
     
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
+        
+        // Skip ground pins - they are not hoverable
+        if (IsGroundPin(pin)) {
+            continue;
+        }
+        
         float dx = world_x - pin.pos.x;
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);

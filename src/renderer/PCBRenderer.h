@@ -98,12 +98,14 @@ private:
     void RenderOutline();
     void RenderParts();
     void RenderPins();
-    
-    // Enhanced rendering methods
+      // Enhanced rendering methods
     void RenderPartOutline(const BRDPart& part, const std::vector<BRDPin>& part_pins);
     float DeterminePinMargin(const BRDPart& part, const std::vector<BRDPin>& part_pins, float distance);
     float DeterminePinSize(const BRDPart& part, const std::vector<BRDPin>& part_pins);
     void RenderGenericComponentOutline(float min_x, float min_y, float max_x, float max_y, float margin);
+    
+    // Pin utilities
+    bool IsGroundPin(const BRDPin& pin);
     
     // Coordinate conversion
     void WorldToScreen(float world_x, float world_y, float& screen_x, float& screen_y, 
