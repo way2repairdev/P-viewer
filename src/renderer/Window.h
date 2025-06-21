@@ -21,11 +21,16 @@ public:
     static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
     static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-    static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);
-
-    // Getters
+    static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos);    // Getters
     int GetWidth() const { return width; }
     int GetHeight() const { return height; }
+    
+    // Update window size (for responsive handling)
+    void UpdateSize() {
+        if (window) {
+            glfwGetFramebufferSize(window, &width, &height);
+        }
+    }
 
 private:
     GLFWwindow* window = nullptr;

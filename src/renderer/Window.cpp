@@ -32,10 +32,11 @@ bool Window::Initialize() {
         LOG_ERROR("Failed to create GLFW window");
         glfwTerminate();
         return false;
-    }
-
-    // Make the window's context current
+    }    // Make the window's context current
     glfwMakeContextCurrent(window);
+    
+    // Enable V-sync for better performance and responsiveness
+    glfwSwapInterval(1);
 
     // Set callbacks
     glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
@@ -93,6 +94,9 @@ void Window::PollEvents() {
 // Callback implementations
 void Window::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    
+    // Update the Window instance size if we have a way to access it
+    // This ensures the window size is always current
 }
 
 void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {

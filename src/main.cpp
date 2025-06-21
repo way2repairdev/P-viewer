@@ -5,6 +5,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <chrono>
+#include <thread>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -80,14 +82,27 @@ public:
         }        // Main rendering loop
         LOG_INFO("Starting main render loop");
         int frame_count = 0;
+        
+        // Frame rate limiting variables
+        const double target_fps = 60.0;
+        const double frame_time = 1.0 / target_fps;
+        auto last_time = std::chrono::high_resolution_clock::now();
+        
         while (!window.ShouldClose()) {
             if (frame_count == 0) {
                 LOG_INFO("First frame rendering");
             }
             frame_count++;
             
-            window.PollEvents();
-              HandleInput();
+            // Calculate delta time for frame rate limiting
+            auto current_time = std::chrono::high_resolution_clock::now();
+            double delta_time = std::chrono::duration<double>(current_time - last_time).count();
+              window.PollEvents();
+            
+            // Update window size for responsiveness
+            window.UpdateSize();
+            
+            HandleInput();
             
             // Start ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
@@ -105,6 +120,18 @@ public:
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             
             window.SwapBuffers();
+            
+            // Frame rate limiting - only sleep if we're rendering too fast
+            double frame_end_time = std::chrono::duration<double>(
+                std::chrono::high_resolution_clock::now() - current_time).count();
+            
+            if (frame_end_time < frame_time) {
+                double sleep_time = frame_time - frame_end_time;
+                std::this_thread::sleep_for(std::chrono::microseconds(
+                    static_cast<int>(sleep_time * 1000000)));
+            }
+            
+            last_time = current_time;
         }
     }
 
