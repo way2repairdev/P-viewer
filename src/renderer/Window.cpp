@@ -110,13 +110,13 @@ void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
-        LOG_DEBUG("Left mouse button clicked at: " + std::to_string(xpos) + ", " + std::to_string(ypos));
+        // Handle left mouse button click
     }
 }
 
 void Window::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
     // Handle scroll events for zooming
-    LOG_DEBUG("Scroll: " + std::to_string(yoffset));
+    // Handle mouse scroll for zoom
 }
 
 void Window::CursorPosCallback(GLFWwindow* window, double xpos, double ypos) {

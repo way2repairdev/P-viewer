@@ -101,7 +101,7 @@ void PCBRenderer::Render(int window_width, int window_height) {
         return;
     }
 
-    LOG_DEBUG("Rendering PCB with " + std::to_string(pcb_data->pins.size()) + " pins and " + std::to_string(pcb_data->outline_segments.size()) + " outline segments");    // Clear screen with PCB green background
+    // Clear screen with PCB green background
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -117,7 +117,7 @@ void PCBRenderer::Render(int window_width, int window_height) {
     float offset_x = window_width * 0.5f - camera.x * zoom;
     float offset_y = window_height * 0.5f + camera.y * zoom;  // Mirror Y-axis
     
-    LOG_DEBUG("Camera: x=" + std::to_string(camera.x) + ", y=" + std::to_string(camera.y) + ", zoom=" + std::to_string(camera.zoom));
+    // Apply camera transformation
 
     // Create a fullscreen ImGui window for PCB rendering
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -571,7 +571,7 @@ void PCBRenderer::RenderOutlineImGui(ImDrawList* draw_list, float zoom, float of
         return;
     }
 
-    LOG_DEBUG("Rendering " + std::to_string(pcb_data->outline_segments.size()) + " outline segments with ImGui");
+    // Render board outline
     
     // Set outline color - white/gray for PCB outline
     ImU32 outline_color = IM_COL32(255, 255, 255, 255);
@@ -584,7 +584,7 @@ void PCBRenderer::RenderOutlineImGui(ImDrawList* draw_list, float zoom, float of
         draw_list->AddLine(p1, p2, outline_color, 2.0f);
     }
     
-    LOG_DEBUG("Completed outline rendering");
+    // Outline rendering complete
 }
 
 void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
@@ -593,7 +593,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         return;
     }
 
-    LOG_DEBUG("Rendering " + std::to_string(pcb_data->parts.size()) + " parts with ImGui");
+    // Parts rendering
     
     for (size_t i = 0; i < pcb_data->parts.size(); ++i) {
         const auto& part = pcb_data->parts[i];
@@ -726,7 +726,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         }
     }
     
-    LOG_DEBUG("Completed parts rendering");
+    // Parts rendering complete
 }
 
 void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
@@ -734,7 +734,7 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         LOG_INFO("No pins to render");
         return;
     }
-    LOG_DEBUG("Rendering " + std::to_string(pcb_data->pins.size()) + " pins with ImGui");
+    // Pins rendering
     
     // Set pin colors - BLUE as requested
     ImU32 pin_fill_color = IM_COL32(100, 150, 255, 255);    // Blue pin color
@@ -849,7 +849,7 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         }
     }
     
-    LOG_DEBUG("Completed pins rendering");
+    // Pins rendering complete
 }
 
 // Pin selection functionality
