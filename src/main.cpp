@@ -149,18 +149,10 @@ private:
     Window window;
     PCBRenderer renderer;
     std::shared_ptr<BRDFileBase> pcb_data;
-    
-    // Input state
+      // Input state
     bool mouse_dragging = false;
     double last_mouse_x = 0.0;
     double last_mouse_y = 0.0;
-    
-    // Double-click detection for pin selection
-    double last_click_time = 0.0;
-    float last_click_x = 0.0f;
-    float last_click_y = 0.0f;
-    const double double_click_time = 0.5; // 500ms for double-click
-    const float double_click_distance = 10.0f; // 10 pixels tolerance
 
     // File dialog functions
     std::string OpenFileDialog() {
@@ -305,29 +297,15 @@ private:
         int hovered_pin = renderer.GetHoveredPin(static_cast<float>(mouse_x), static_cast<float>(mouse_y), 
                                                 window.GetWidth(), window.GetHeight());
         renderer.SetHoveredPin(hovered_pin);
-        
-        // Handle left mouse button for pin selection (double-click)
+          // Handle left mouse button for pin selection (single-click)
         static bool left_mouse_pressed = false;
         if (glfwGetMouseButton(glfw_window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             if (!left_mouse_pressed) {
                 left_mouse_pressed = true;
                 
-                // Check for double-click
-                double current_time = glfwGetTime();
-                float dx = static_cast<float>(mouse_x) - last_click_x;
-                float dy = static_cast<float>(mouse_y) - last_click_y;
-                float distance = std::sqrt(dx * dx + dy * dy);
-                
-                if ((current_time - last_click_time) <= double_click_time && distance <= double_click_distance) {
-                    // Double-click detected - handle pin selection
-                    renderer.HandleMouseClick(static_cast<float>(mouse_x), static_cast<float>(mouse_y),
-                                            window.GetWidth(), window.GetHeight());
-                }
-                
-                // Update click tracking
-                last_click_time = current_time;
-                last_click_x = static_cast<float>(mouse_x);
-                last_click_y = static_cast<float>(mouse_y);
+                // Single-click - handle pin selection immediately
+                renderer.HandleMouseClick(static_cast<float>(mouse_x), static_cast<float>(mouse_y),
+                                        window.GetWidth(), window.GetHeight());
             }
         } else {
             left_mouse_pressed = false;
@@ -457,10 +435,9 @@ private:
                                 connected_pins++;
                             }
                         }
-                        ImGui::Text("Connected Pins: %d", connected_pins);
-                        if (connected_pins > 1) {
+                        ImGui::Text("Connected Pins: %d", connected_pins);                        if (connected_pins > 1) {
                             ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
-                                             "Double-click to highlight net");
+                                             "Click to highlight net");
                         }
                     }
                 }
@@ -470,9 +447,8 @@ private:
                 
                 // Show selection status
                 if (renderer.GetSelectedPinIndex() == hovered_pin) {
-                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SELECTED");
-                } else {
-                    ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Double-click to select");
+                    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "SELECTED");                } else {
+                    ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "Click to select");
                 }
                 
                 ImGui::End();
@@ -506,8 +482,7 @@ private:
                                     connected_pins++;
                                 }
                             }
-                            ImGui::Text("Total pins in net: %d", connected_pins);
-                            if (connected_pins > 1) {
+                            ImGui::Text("Total pins in net: %d", connected_pins);                            if (connected_pins > 1) {
                                 ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), 
                                                  "%d pins highlighted", connected_pins);
                             }
