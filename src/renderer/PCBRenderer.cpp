@@ -641,22 +641,32 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                 float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));
                 
                 draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-                draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);
-                  // Add component label - adaptive threshold based on component size
+                draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);                // Add component label - only if text fits completely inside component
                 float component_screen_size = std::max(x2 - x1, y2 - y1);
-                if (component_screen_size > 30.0f && !part.name.empty()) {  // Show text when component is large enough
-                    float text_x = (x1 + x2) * 0.5f;
-                    float text_y = (y1 + y2) * 0.5f;
-                    
+                if (component_screen_size > 30.0f && !part.name.empty()) {
                     ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
-                    ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
                     
-                    // Add text background
-                    ImVec2 bg_min = ImVec2(text_pos.x - 2, text_pos.y - 1);
-                    ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 2, text_pos.y + text_size.y + 1);
-                    draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
-                    
-                    draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
+                    // Check if text fits inside component with margin
+                    float text_margin = 4.0f;  // 2px margin on each side
+                    if (text_size.x <= (x2 - x1 - text_margin) && text_size.y <= (y2 - y1 - text_margin)) {
+                        float text_x = (x1 + x2) * 0.5f;
+                        float text_y = (y1 + y2) * 0.5f;
+                        
+                        ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
+                        
+                        // Clip text rendering to component boundaries
+                        draw_list->PushClipRect(ImVec2(x1, y1), ImVec2(x2, y2), true);
+                        
+                        // Add text background for better readability
+                        ImVec2 bg_min = ImVec2(text_pos.x - 1, text_pos.y);
+                        ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 1, text_pos.y + text_size.y);
+                        draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
+                        
+                        draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
+                        
+                        // Restore clipping
+                        draw_list->PopClipRect();
+                    }
                 }
             }
             continue;
@@ -745,25 +755,34 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
           // Draw component body with adaptive outline thickness
         float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));  // Thicker when zoomed out
         draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);        // Add part name with adaptive text rendering threshold
+        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);        // Add part name - only if text fits completely inside component
         float component_screen_size = std::max(x2 - x1, y2 - y1);
-        if (component_screen_size > 30.0f && !part.name.empty()) {  // Show text when component is large enough
-            float text_x = (min_x + max_x) * 0.5f * zoom + offset_x;
-            float text_y = offset_y - (min_y + max_y) * 0.5f * zoom;  // Mirror Y
-            
-            // Calculate text size and position for centering
+        if (component_screen_size > 30.0f && !part.name.empty()) {
             ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
-            ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
             
-            // Use high-contrast white text like OpenBoardView
-            ImU32 text_color = IM_COL32(255, 255, 255, 255); // White text
-            
-            // Add text background for better readability like OpenBoardView
-            ImVec2 bg_min = ImVec2(text_pos.x - 2, text_pos.y - 1);
-            ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 2, text_pos.y + text_size.y + 1);
-            draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120)); // Semi-transparent black background
-            
-            draw_list->AddText(text_pos, text_color, part.name.c_str());
+            // Check if text fits inside component with margin
+            float text_margin = 4.0f;  // 2px margin on each side
+            if (text_size.x <= (x2 - x1 - text_margin) && text_size.y <= (y2 - y1 - text_margin)) {
+                float text_x = (min_x + max_x) * 0.5f * zoom + offset_x;
+                float text_y = offset_y - (min_y + max_y) * 0.5f * zoom;  // Mirror Y
+                
+                // Calculate text position for centering
+                ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
+                
+                // Clip text rendering to component boundaries
+                draw_list->PushClipRect(ImVec2(x1, y1), ImVec2(x2, y2), true);
+                
+                // Add text background for better readability
+                ImVec2 bg_min = ImVec2(text_pos.x - 1, text_pos.y);
+                ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 1, text_pos.y + text_size.y);
+                draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
+                
+                // Use high-contrast white text
+                draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
+                
+                // Restore clipping
+                draw_list->PopClipRect();
+            }
         }
     }
     
