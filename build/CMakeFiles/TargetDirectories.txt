@@ -1,3 +1,0 @@
-C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/pcb_viewer.dir
-C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/Rathe/source/repos/way2repair/P-viewer/build/CMakeFiles/ZERO_CHECK.dir

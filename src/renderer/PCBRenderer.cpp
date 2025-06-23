@@ -763,7 +763,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             float text_margin = 4.0f;  // 2px margin on each side
             if (text_size.x <= (x2 - x1 - text_margin) && text_size.y <= (y2 - y1 - text_margin)) {
                 float text_x = (min_x + max_x) * 0.5f * zoom + offset_x;
-                float text_y = (y1 + y2) * 0.5f * zoom;  // Mirror Y
+                float text_y = offset_y - (min_y + max_y) * 0.5f * zoom;  // Mirror Y
                 
                 // Calculate text position for centering
                 ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
@@ -808,51 +808,6 @@ bool PCBRenderer::IsGroundPin(const BRDPin& pin) {
             net_upper.find("GROUND") == 0); // Starts with GROUND
 }
 
-bool PCBRenderer::IsUnconnectedPin(const BRDPin& pin) {
-    // Check if pin is unconnected based on net name
-    if (pin.net.empty()) return false;  // Empty net name doesn't mean unconnected
-    
-    std::string net_upper = pin.net;
-    // Convert to uppercase for case-insensitive comparison
-    std::transform(net_upper.begin(), net_upper.end(), net_upper.begin(), ::toupper);
-    
-    // Common unconnected net names - be more specific
-    return (net_upper == "UNCONNECTED" || 
-            net_upper == "NC" || 
-            net_upper == "NOCONNECT" || 
-            net_upper == "NO_CONNECT" ||
-            net_upper == "UNROUTED" ||
-            net_upper == "N/C" ||
-            net_upper == "NO CONNECTION");
-}
-
-bool PCBRenderer::IsSinglePin(const BRDPin& pin) {
-    if (!pcb_data) return false;
-    
-    // Count how many pins belong to the same part as this pin
-    int pin_count = 0;
-    for (const auto& other_pin : pcb_data->pins) {
-        if (other_pin.part == pin.part) {
-            pin_count++;
-        }
-    }
-    
-    // A single pin is a component with only one pin
-    return pin_count == 1;
-}
-
-bool PCBRenderer::IsICComponent(const BRDPin& pin) {
-    // Check if the pin belongs to an IC component (U* or Q*)
-    if (pin.part == 0 || !pcb_data || pin.part > pcb_data->parts.size()) return false;
-    
-    // Get the part name using the part index
-    const BRDPart& part = pcb_data->parts[pin.part - 1]; // parts are 1-indexed
-    if (part.name.empty()) return false;
-    
-    char first_char = part.name[0];
-    return (first_char == 'U' || first_char == 'Q');
-}
-
 void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->pins.empty()) {
         LOG_INFO("No pins to render");
@@ -867,10 +822,6 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     ImU32 ground_pin_fill_color = IM_COL32(120, 120, 120, 255);    // Gray
     ImU32 ground_pin_outline_color = IM_COL32(80, 80, 80, 255);    // Dark gray
     
-    // Unconnected pin colors (blue and non-selectable)
-    ImU32 unconnected_pin_fill_color = IM_COL32(0, 100, 200, 255);    // Blue
-    ImU32 unconnected_pin_outline_color = IM_COL32(0, 80, 160, 255);  // Dark blue
-    
     for (size_t pin_index = 0; pin_index < pcb_data->pins.size(); ++pin_index) {
         const auto& pin = pcb_data->pins[pin_index];
         // Transform pin coordinates to screen space with Y-axis mirroring
@@ -883,23 +834,15 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         float min_screen_size = 2.0f;  // Minimum 2 pixels
         float max_screen_size = 500.0f; // Maximum 20 pixels to prevent huge pins
           float pin_radius = std::max(min_screen_size, std::min(max_screen_size, screen_pin_size));
-          // Check if this is a ground pin or unconnected pin
+        
+        // Check if this is a ground pin
         bool is_ground_pin = IsGroundPin(pin);
-        bool is_unconnected_pin = IsUnconnectedPin(pin);
-        bool is_single_pin = IsSinglePin(pin);
-        bool is_ic_component = IsICComponent(pin);
         
         // Determine pin colors based on selection state and pin type
         ImU32 current_pin_fill_color;
         ImU32 current_pin_outline_color;
         float current_outline_thickness = 1.5f;
-        
-        if (is_unconnected_pin) {
-            // Unconnected pins are always blue and cannot be selected
-            current_pin_fill_color = unconnected_pin_fill_color;
-            current_pin_outline_color = unconnected_pin_outline_color;
-            current_outline_thickness = 1.0f;  // Thinner outline for unconnected pins
-        } else if (is_ground_pin) {
+          if (is_ground_pin) {
             // Ground pins are always gray and cannot be selected
             current_pin_fill_color = ground_pin_fill_color;
             current_pin_outline_color = ground_pin_outline_color;
@@ -909,8 +852,9 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             current_pin_fill_color = pin_fill_color;
             current_pin_outline_color = pin_outline_color;
         }
-          // Apply selection/hover effects only to selectable pins (not ground or unconnected)
-        if (!is_ground_pin && !is_unconnected_pin) {
+        
+        // Apply selection/hover effects only to non-ground pins
+        if (!is_ground_pin) {
           // Check if this pin is selected - Yellow glowing effect
         if (selected_pin_index == static_cast<int>(pin_index)) {
             current_pin_fill_color = IM_COL32(255, 255, 100, 255);    // Bright yellow
@@ -943,31 +887,15 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             current_pin_fill_color = IM_COL32(255, 150, 150, 255);    // Light red highlight
             current_pin_outline_color = IM_COL32(255, 100, 100, 255); // Red outline            current_outline_thickness = 2.0f;  // Slightly thicker for hover
         }
-        } // End of if (!is_ground_pin && !is_unconnected_pin) block
-          // Only draw pins if they're visible (not too small)
+        } // End of if (!is_ground_pin) block
+        
+        // Only draw pins if they're visible (not too small)
         if (pin_radius >= 0.5f) {
-            // Draw pins with different shapes based on component type
-            if (is_ic_component) {
-                // IC components (U*, Q*) - use circular pins
-                draw_list->AddCircleFilled(ImVec2(x, y), pin_radius, current_pin_fill_color);
-                
-                // Only draw outline if pins are large enough and not single pins
-                if (pin_radius > 2.0f && !is_single_pin) {
-                    draw_list->AddCircle(ImVec2(x, y), pin_radius, current_pin_outline_color, 0, current_outline_thickness);
-                }
-            } else {
-                // Non-IC components - use rectangular pins
-                float half_size = pin_radius * 0.8f;  // Make rectangles slightly smaller than circles
-                ImVec2 rect_min(x - half_size, y - half_size);
-                ImVec2 rect_max(x + half_size, y + half_size);
-                
-                draw_list->AddRectFilled(rect_min, rect_max, current_pin_fill_color);
-                
-                // Only draw outline if pins are large enough and not single pins
-                if (pin_radius > 2.0f && !is_single_pin) {
-                    draw_list->AddRect(rect_min, rect_max, current_pin_outline_color, 0.0f, 0, current_outline_thickness);
-                }
-            }            // Show pin number and net name INSIDE the pin - adaptive and properly sized
+            // Draw pin as filled circle
+            draw_list->AddCircleFilled(ImVec2(x, y), pin_radius, current_pin_fill_color);            // Only draw outline if pins are large enough
+            if (pin_radius > 2.0f) {  // Lower threshold for outlines
+                draw_list->AddCircle(ImVec2(x, y), pin_radius, current_pin_outline_color, 0, current_outline_thickness);
+            }            // Show pin number and net name INSIDE the pin circle - adaptive and properly sized
             if (pin_radius > 8.0f) {  // Only show text when pin is large enough (reduced threshold)
                 // Use smaller font size to fit both texts inside
                 ImGui::PushFont(nullptr); // Use default smaller font
@@ -982,10 +910,8 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
                     pin_number = pin.name;
                 }
                 
-                // Get net name (special handling for unconnected pins)
-                if (is_unconnected_pin) {
-                    net_name = "NC";  // Show "NC" for unconnected pins
-                } else if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "") {
+                // Get net name (prefer meaningful names)
+                if (!pin.net.empty() && pin.net != "UNCONNECTED" && pin.net != "") {
                     if (pin.net.substr(0, 4) != "NET_") {
                         net_name = pin.net;  // Meaningful names (VCC, GND, etc.)
                     } else {
@@ -993,35 +919,24 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
                     }
                 }
                 
-                // Calculate maximum text width that fits in pin (with margin)
+                // Calculate maximum text width that fits in pin circle (with margin)
                 float max_text_width = pin_radius * 1.6f;  // Use 80% of diameter
                 
                 // Calculate text sizes for positioning
                 ImVec2 pin_text_size = pin_number.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(pin_number.c_str());
                 ImVec2 net_text_size = net_name.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(net_name.c_str());
                 
-                // Only show text if it fits within the pin
+                // Only show text if it fits within the pin circle
                 bool show_pin_text = !pin_number.empty() && pin_text_size.x <= max_text_width;
                 bool show_net_text = !net_name.empty() && net_text_size.x <= max_text_width;
                 
                 if (show_pin_text || show_net_text) {
-                    // Clip text rendering to pin bounds
-                    if (is_ic_component) {
-                        // Circular clipping for IC pins
-                        draw_list->PushClipRect(
-                            ImVec2(x - pin_radius, y - pin_radius), 
-                            ImVec2(x + pin_radius, y + pin_radius), 
-                            true
-                        );
-                    } else {
-                        // Rectangular clipping for non-IC pins
-                        float half_size = pin_radius * 0.8f;
-                        draw_list->PushClipRect(
-                            ImVec2(x - half_size, y - half_size), 
-                            ImVec2(x + half_size, y + half_size), 
-                            true
-                        );
-                    }
+                    // Clip text rendering to pin circle
+                    draw_list->PushClipRect(
+                        ImVec2(x - pin_radius, y - pin_radius), 
+                        ImVec2(x + pin_radius, y + pin_radius), 
+                        true
+                    );
                     
                     float text_spacing = 1.0f; // Reduced spacing between pin number and net name
                     
@@ -1029,21 +944,19 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
                         // Both texts - stack them vertically
                         float total_text_height = pin_text_size.y + net_text_size.y + text_spacing;
                         
-                        // Position pin number at TOP (WHITE text for better contrast)
+                        // Position pin number at TOP of circle (WHITE text for better contrast)
                         ImVec2 pin_text_pos(
                             x - pin_text_size.x * 0.5f, 
                             y - total_text_height * 0.5f
                         );
                         draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), pin_number.c_str());
                         
-                        // Position net name at BOTTOM (special colors for different types)
+                        // Position net name at BOTTOM of circle (YELLOW text for visibility)
                         ImVec2 net_text_pos(
                             x - net_text_size.x * 0.5f, 
                             y - total_text_height * 0.5f + pin_text_size.y + text_spacing
                         );
-                        ImU32 net_text_color = is_unconnected_pin ? IM_COL32(255, 255, 255, 255) :  // White for "NC"
-                                               IM_COL32(255, 255, 0, 255);  // Yellow for regular nets
-                        draw_list->AddText(net_text_pos, net_text_color, net_name.c_str());
+                        draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), net_name.c_str());
                     }
                     else if (show_pin_text) {
                         // Only pin number - center it
@@ -1059,9 +972,7 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
                             x - net_text_size.x * 0.5f, 
                             y - net_text_size.y * 0.5f
                         );
-                        ImU32 net_text_color = is_unconnected_pin ? IM_COL32(255, 255, 255, 255) :  // White for "NC"
-                                               IM_COL32(255, 255, 0, 255);  // Yellow for regular nets
-                        draw_list->AddText(net_text_pos, net_text_color, net_name.c_str());
+                        draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), net_name.c_str());
                     }
                     
                     // Restore clipping
@@ -1090,8 +1001,9 @@ bool PCBRenderer::HandleMouseClick(float screen_x, float screen_y, int window_wi
     
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
-          // Skip ground pins and unconnected pins - they are not selectable
-        if (IsGroundPin(pin) || IsUnconnectedPin(pin)) {
+        
+        // Skip ground pins - they are not selectable
+        if (IsGroundPin(pin)) {
             continue;
         }
         
@@ -1135,8 +1047,9 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
     
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
-          // Skip ground pins and unconnected pins - they are not hoverable
-        if (IsGroundPin(pin) || IsUnconnectedPin(pin)) {
+        
+        // Skip ground pins - they are not hoverable
+        if (IsGroundPin(pin)) {
             continue;
         }
         
