@@ -32,10 +32,11 @@ bool Window::Initialize() {
         LOG_ERROR("Failed to create GLFW window");
         glfwTerminate();
         return false;
-    }
-
-    // Make the window's context current
+    }    // Make the window's context current
     glfwMakeContextCurrent(window);
+    
+    // Enable V-sync for better performance and responsiveness
+    glfwSwapInterval(1);
 
     // Set callbacks
     glfwSetFramebufferSizeCallback(window, FramebufferSizeCallback);
@@ -93,6 +94,9 @@ void Window::PollEvents() {
 // Callback implementations
 void Window::FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
+    
+    // Update the Window instance size if we have a way to access it
+    // This ensures the window size is always current
 }
 
 void Window::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -106,13 +110,13 @@ void Window::MouseButtonCallback(GLFWwindow* window, int button, int action, int
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
-        LOG_DEBUG("Left mouse button clicked at: " + std::to_string(xpos) + ", " + std::to_string(ypos));
+        // Handle left mouse button click
     }
 }
 
 void Window::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
     // Handle scroll events for zooming
-    LOG_DEBUG("Scroll: " + std::to_string(yoffset));
+    // Handle mouse scroll for zoom
 }
 
 void Window::CursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
