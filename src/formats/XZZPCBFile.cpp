@@ -19,17 +19,14 @@
  * Also credit to @inflex and @MuertoGB for help with cracking the encryption + decoding the format
  */
 
-static unsigned char hexconv[256] = {0}; // Initialize all to 0
-// Set up the hex conversion lookup table
-void init_hexconv() {
-    static bool initialized = false;
-    if (!initialized) {
-        for (int i = '0'; i <= '9'; i++) hexconv[i] = i - '0';
-        for (int i = 'A'; i <= 'F'; i++) hexconv[i] = i - 'A' + 10;
-        for (int i = 'a'; i <= 'f'; i++) hexconv[i] = i - 'a' + 10;
-        initialized = true;
-    }
-}
+static unsigned char hexconv[256] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 0, 0,  0,  0,  0,  0,  10, 11, 12, 13, 14, 15, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 11, 12, 13, 14, 15, 0,  0,  0,  0,  0,  0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0};
 
 std::unique_ptr<XZZPCBFile> XZZPCBFile::LoadFromFile(const std::string& filepath) {
     std::cout << "LoadFromFile: Opening " << filepath << std::endl;
@@ -59,8 +56,6 @@ std::unique_ptr<XZZPCBFile> XZZPCBFile::LoadFromFile(const std::string& filepath
 }
 
 bool XZZPCBFile::Load(const std::vector<char>& buffer, const std::string& filepath) {
-    init_hexconv(); // Initialize hex conversion table
-    
     if (!VerifyFormat(buffer)) {
         std::cerr << "Error: Invalid XZZPCB format" << std::endl;
         return false;
@@ -401,7 +396,7 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
     std::string part_name(reinterpret_cast<char*>(&buf[current_pointer]), part_name_size);
     current_pointer += part_name_size;
 
-    part.name = part_name;
+    part.name = strdup(part_name.c_str());
     part.mounting_side = BRDPartMountingSide::Top;
     part.part_type = BRDPartType::SMD;
 
@@ -452,12 +447,9 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                 current_pointer += 4;
                 if (current_pointer + pin_name_size > buf.size()) return;
                 std::string pin_name(reinterpret_cast<char*>(&buf[current_pointer]), pin_name_size);
-                pin.name = pin_name;
-                pin.snum = pin_name;
-                
-                // Debug: Log pin data loading
-                std::cout << "DEBUG: Loaded pin - name: '" << pin_name << "', setting snum to: '" << pin.snum << "'" << std::endl;
 
+                pin.name = strdup(pin_name.c_str());
+                pin.snum = strdup(pin_name.c_str());
                 current_pointer += pin_name_size;
                 current_pointer += 32;
 
@@ -469,21 +461,23 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                 std::string pin_net = net_dict[net_index];
 
                 if (pin_net == "NC") {
-                    pin.net = "UNCONNECTED";
+                    pin.net = strdup("UNCONNECTED");
                 } else {
-                    pin.net = pin_net;
-                }                pin.part = parts.size() + 1;
+                    pin.net = strdup(pin_net.c_str());
+                }
+
+                pin.part = parts.size() + 1;
 
                 if (!diode_reading.empty()) {
-                    pin.comment = diode_reading;
+                    pin.comment = strdup(diode_reading.c_str());
                 } else if (diode_readings_type == 1) {
                     if (diode_dict.find(part.name) != diode_dict.end() &&
                         diode_dict[part.name].find(pin.name) != diode_dict[part.name].end()) {
-                        pin.comment = diode_dict[part.name][pin.name];
+                        pin.comment = strdup(diode_dict[part.name][pin.name].c_str());
                     }
                 } else if (diode_readings_type == 2) {
                     if (diode_dict.find(pin.net) != diode_dict.end()) {
-                        pin.comment = diode_dict[pin.net]["0"];
+                        pin.comment = strdup(diode_dict[pin.net]["0"].c_str());
                     }
                 }
 
@@ -526,28 +520,26 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
     current_pointer += name_length;
     current_pointer = buf.size() - 4;
     if (current_pointer >= buf.size()) return;
-    uint32_t net_index = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);    part.name = "..." + name; // To make it get the kPinTypeTestPad type
+    uint32_t net_index = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+
+    part.name = strdup(("..." + name).c_str()); // To make it get the kPinTypeTestPad type
     part.mounting_side = BRDPartMountingSide::Top;
     part.part_type = BRDPartType::SMD;
 
-    pin.snum = name;
-    
-    // Debug: Log pin data loading for test pad
-    std::cout << "DEBUG: Loaded test pad pin - name: '" << name << "', setting snum to: '" << pin.snum << "'" << std::endl;
-
+    pin.snum = strdup(name.c_str());
     pin.side = BRDPinSide::Top;
     pin.pos.x = static_cast<int>(static_cast<double>(x_origin / 10000.0));
     pin.pos.y = static_cast<int>(static_cast<double>(y_origin / 10000.0));
     if (net_dict.find(net_index) != net_dict.end()) {
         if (net_dict[net_index] == "UNCONNECTED" || net_dict[net_index] == "NC") {
-            pin.net = ""; // As the part already gets the kPinTypeTestPad type if "UNCONNECTED" is used type will be changed
-                          // to kPinTypeNotConnected
+            pin.net = strdup(""); // As the part already gets the kPinTypeTestPad type if "UNCONNECTED" is used type will be changed
+                                  // to kPinTypeNotConnected
         } else {
-            pin.net = net_dict[net_index];
+            pin.net = strdup(net_dict[net_index].c_str());
         }
     } else {
-        pin.net = ""; // As the part already gets the kPinTypeTestPad type if "UNCONNECTED" is used type will be changed to
-                      // kPinTypeNotConnected
+        pin.net = strdup(""); // As the part already gets the kPinTypeTestPad type if "UNCONNECTED" is used type will be changed to
+                              // kPinTypeNotConnected
     }
     pin.part = parts.size() + 1;
     pins.push_back(pin);
