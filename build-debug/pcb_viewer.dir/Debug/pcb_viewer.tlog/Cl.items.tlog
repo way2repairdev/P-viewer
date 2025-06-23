@@ -1,0 +1,8 @@
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\core\BRDTypes.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\BRDTypes.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\core\Utils.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\Utils.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\formats\BRDFileBase.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\BRDFileBase.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\formats\XZZPCBFile.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\XZZPCBFile.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\formats\des.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\des.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\renderer\PCBRenderer.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\PCBRenderer.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\renderer\Window.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\Window.obj
+C:\Users\Rathe\source\repos\way2repair\P-viewer\src\main.cpp;C:\Users\Rathe\source\repos\way2repair\P-viewer\build-debug\pcb_viewer.dir\Debug\main.obj
