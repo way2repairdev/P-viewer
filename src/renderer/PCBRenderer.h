@@ -103,9 +103,10 @@ private:
     float DeterminePinMargin(const BRDPart& part, const std::vector<BRDPin>& part_pins, float distance);
     float DeterminePinSize(const BRDPart& part, const std::vector<BRDPin>& part_pins);
     void RenderGenericComponentOutline(float min_x, float min_y, float max_x, float max_y, float margin);
-    
-    // Pin utilities
+    void RenderConnectorComponentImGui(ImDrawList* draw_list, const BRDPart& part, const std::vector<BRDPin>& part_pins, float zoom, float offset_x, float offset_y);    // Pin utilities
     bool IsGroundPin(const BRDPin& pin);
+    bool IsUnconnectedPin(const BRDPin& pin);
+    bool IsConnectorComponent(const BRDPart& part);
     
     // Coordinate conversion
     void WorldToScreen(float world_x, float world_y, float& screen_x, float& screen_y, 

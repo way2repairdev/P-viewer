@@ -827,7 +827,7 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         // Transform pin coordinates to screen space with Y-axis mirroring
         float x = pin.pos.x * zoom + offset_x;
         float y = offset_y - pin.pos.y * zoom;  // Mirror Y        // Calculate pin size based on zoom with minimum size for visibility
-        float base_pin_size = 7.5f;  // Base pin size in world units
+        float base_pin_size = 6.5f;  // Base pin size in world units
         float screen_pin_size = base_pin_size * zoom;  // Size in screen pixels
         
         // Ensure pins are always visible with minimum screen size
