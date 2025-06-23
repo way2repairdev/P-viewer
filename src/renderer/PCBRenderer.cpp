@@ -360,35 +360,35 @@ void PCBRenderer::RenderPartOutline(const BRDPart& part, const std::vector<BRDPi
 
 float PCBRenderer::DeterminePinMargin(const BRDPart& part, const std::vector<BRDPin>& part_pins, float distance) {
     int pin_count = part_pins.size();
-      // Enhanced component type detection based on OpenBoardView logic
+      // Enhanced component type detection based on OpenBoardView logic - REDUCED MARGINS
     if (pin_count < 4 && !part.name.empty() && part.name[0] != 'U' && part.name[0] != 'Q') {
-        // 2-3 pin components - likely passives
+        // 2-3 pin components - likely passives (reduced margins by ~30-40%)
         if (distance > 52 && distance < 57) {
-            return 8.0f; // 0603
+            return 5.0f; // 0603 - reduced from 8.0f
         } else if (distance > 247 && distance < 253) {
-            return 25.0f; // SMC diode
+            return 15.0f; // SMC diode - reduced from 25.0f
         } else if (distance > 195 && distance < 199) {
-            return 25.0f; // Inductor
+            return 15.0f; // Inductor - reduced from 25.0f
         } else if (distance > 165 && distance < 169) {
-            return 18.0f; // SMB diode
+            return 12.0f; // SMB diode - reduced from 18.0f
         } else if (distance > 101 && distance < 109) {
-            return 15.0f; // SMA diode / tant cap
+            return 10.0f; // SMA diode / tant cap - reduced from 15.0f
         } else if (distance > 108 && distance < 112) {
-            return 15.0f; // 1206
+            return 10.0f; // 1206 - reduced from 15.0f
         } else if (distance > 64 && distance < 68) {
-            return 13.0f; // 0805
+            return 8.0f; // 0805 - reduced from 13.0f
         } else if (distance > 18 && distance < 22) {
-            return 3.0f; // 0201
+            return 2.0f; // 0201 - reduced from 3.0f
         } else if (distance > 28 && distance < 32) {
-            return 5.0f; // 0402
+            return 3.0f; // 0402 - reduced from 5.0f
         }
     }
     
-    // Default margins for other components
-    if (pin_count <= 4) return 10.0f;
-    if (pin_count <= 16) return 15.0f;
-    if (pin_count <= 32) return 20.0f;
-    return 25.0f; // Large ICs
+    // Default margins for other components (reduced by ~30-40%)
+    if (pin_count <= 4) return 6.0f;   // reduced from 10.0f
+    if (pin_count <= 16) return 9.0f;  // reduced from 15.0f
+    if (pin_count <= 32) return 12.0f; // reduced from 20.0f
+    return 15.0f; // Large ICs - reduced from 25.0f
 }
 
 void PCBRenderer::RenderGenericComponentOutline(float min_x, float min_y, float max_x, float max_y, float margin) {
@@ -672,8 +672,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             }
             continue;
         }
-        
-        // Calculate bounding box from pins
+          // Calculate bounding box from pins
         float min_x = part_pins[0].pos.x, max_x = part_pins[0].pos.x;
         float min_y = part_pins[0].pos.y, max_y = part_pins[0].pos.y;
         
@@ -681,12 +680,11 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             min_x = std::min(min_x, static_cast<float>(pin.pos.x));
             max_x = std::max(max_x, static_cast<float>(pin.pos.x));
             min_y = std::min(min_y, static_cast<float>(pin.pos.y));
-            max_y = std::max(max_y, static_cast<float>(pin.pos.y));
-        }
+            max_y = std::max(max_y, static_cast<float>(pin.pos.y));        }
         
         // Add margin around pins to create component body
-        float margin = DeterminePinMargin(part, part_pins, 
-            std::sqrt((max_x - min_x) * (max_x - min_x) + (max_y - min_y) * (max_y - min_y)));        // Transform to screen coordinates with Y-axis mirroring
+        float distance = std::sqrt((max_x - min_x) * (max_x - min_x) + (max_y - min_y) * (max_y - min_y));
+        float margin = DeterminePinMargin(part, part_pins, distance);// Transform to screen coordinates with Y-axis mirroring
         float x1 = (min_x - margin) * zoom + offset_x;
         float y1 = offset_y - (min_y - margin) * zoom;  // Mirror Y
         float x2 = (max_x + margin) * zoom + offset_x;
@@ -752,11 +750,11 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             // Default components - use neutral gray with boost
             part_fill_color = IM_COL32(105 * color_boost, 105 * color_boost, 105 * color_boost, 0);
             part_outline_color = IM_COL32(169 * color_boost, 169 * color_boost, 169 * color_boost, 255);
-        }
-          // Draw component body with adaptive outline thickness
-        float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));  // Thicker when zoomed out
-        draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);        // Add part name - only if text fits completely inside component
+        }        // Draw component body with adaptive outline thickness
+        float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));  // Thicker when zoomed out        draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
+        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);
+        
+        // Add part name - only if text fits completely inside component
         float component_screen_size = std::max(x2 - x1, y2 - y1);
         if (component_screen_size > 30.0f && !part.name.empty()) {
             ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
