@@ -469,7 +469,7 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                 std::string pin_net = net_dict[net_index];
 
                 if (pin_net == "NC") {
-                    pin.net = "UNCONNECTED";
+                    pin.net = "NC";
                 } else {
                     pin.net = pin_net;
                 }                pin.part = parts.size() + 1;

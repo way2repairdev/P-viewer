@@ -763,7 +763,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             float text_margin = 4.0f;  // 2px margin on each side
             if (text_size.x <= (x2 - x1 - text_margin) && text_size.y <= (y2 - y1 - text_margin)) {
                 float text_x = (min_x + max_x) * 0.5f * zoom + offset_x;
-                float text_y = offset_y - (min_y + max_y) * 0.5f * zoom;  // Mirror Y
+                float text_y = (y1 + y2) * 0.5f * zoom;  // Mirror Y
                 
                 // Calculate text position for centering
                 ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
@@ -808,6 +808,23 @@ bool PCBRenderer::IsGroundPin(const BRDPin& pin) {
             net_upper.find("GROUND") == 0); // Starts with GROUND
 }
 
+bool PCBRenderer::IsNCPin(const BRDPin& pin) {
+    // Check if pin is a No Connect (NC) pin based on net name
+    if (pin.net.empty()) return false;
+    
+    std::string net_upper = pin.net;
+    // Convert to uppercase for case-insensitive comparison
+    std::transform(net_upper.begin(), net_upper.end(), net_upper.begin(), ::toupper);
+    
+    // Check for NC (No Connect) net names
+    return (net_upper == "NC" || 
+            net_upper == "NO_CONNECT" || 
+            net_upper == "NOCONNECT" ||
+            net_upper == "N/C" ||
+            net_upper == "N.C." ||
+            net_upper.find("NC") == 0);  // Starts with NC (NC1, NC2, etc.)
+}
+
 void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->pins.empty()) {
         LOG_INFO("No pins to render");
@@ -822,6 +839,10 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
     ImU32 ground_pin_fill_color = IM_COL32(120, 120, 120, 255);    // Gray
     ImU32 ground_pin_outline_color = IM_COL32(80, 80, 80, 255);    // Dark gray
     
+    // NC pin colors (light blue and non-selectable)
+    ImU32 nc_pin_fill_color = IM_COL32(173, 216, 230, 255);        // Light blue
+    ImU32 nc_pin_outline_color = IM_COL32(135, 206, 235, 255);     // Sky blue
+    
     for (size_t pin_index = 0; pin_index < pcb_data->pins.size(); ++pin_index) {
         const auto& pin = pcb_data->pins[pin_index];
         // Transform pin coordinates to screen space with Y-axis mirroring
@@ -835,8 +856,9 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
         float max_screen_size = 500.0f; // Maximum 20 pixels to prevent huge pins
           float pin_radius = std::max(min_screen_size, std::min(max_screen_size, screen_pin_size));
         
-        // Check if this is a ground pin
+        // Check if this is a ground pin or NC pin
         bool is_ground_pin = IsGroundPin(pin);
+        bool is_nc_pin = IsNCPin(pin);
         
         // Determine pin colors based on selection state and pin type
         ImU32 current_pin_fill_color;
@@ -847,14 +869,19 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             current_pin_fill_color = ground_pin_fill_color;
             current_pin_outline_color = ground_pin_outline_color;
             current_outline_thickness = 1.0f;  // Thinner outline for ground pins
+        } else if (is_nc_pin) {
+            // NC pins are always light blue and cannot be selected
+            current_pin_fill_color = nc_pin_fill_color;
+            current_pin_outline_color = nc_pin_outline_color;
+            current_outline_thickness = 1.0f;  // Thinner outline for NC pins
         } else {
             // Regular pins use normal coloring
             current_pin_fill_color = pin_fill_color;
             current_pin_outline_color = pin_outline_color;
         }
         
-        // Apply selection/hover effects only to non-ground pins
-        if (!is_ground_pin) {
+        // Apply selection/hover effects only to non-ground and non-NC pins
+        if (!is_ground_pin && !is_nc_pin) {
           // Check if this pin is selected - Yellow glowing effect
         if (selected_pin_index == static_cast<int>(pin_index)) {
             current_pin_fill_color = IM_COL32(255, 255, 100, 255);    // Bright yellow
@@ -887,7 +914,7 @@ void PCBRenderer::RenderPinsImGui(ImDrawList* draw_list, float zoom, float offse
             current_pin_fill_color = IM_COL32(255, 150, 150, 255);    // Light red highlight
             current_pin_outline_color = IM_COL32(255, 100, 100, 255); // Red outline            current_outline_thickness = 2.0f;  // Slightly thicker for hover
         }
-        } // End of if (!is_ground_pin) block
+        } // End of if (!is_ground_pin && !is_nc_pin) block
         
         // Only draw pins if they're visible (not too small)
         if (pin_radius >= 0.5f) {
@@ -1002,8 +1029,8 @@ bool PCBRenderer::HandleMouseClick(float screen_x, float screen_y, int window_wi
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
         
-        // Skip ground pins - they are not selectable
-        if (IsGroundPin(pin)) {
+        // Skip ground pins and NC pins - they are not selectable
+        if (IsGroundPin(pin) || IsNCPin(pin)) {
             continue;
         }
         
@@ -1048,8 +1075,8 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
         
-        // Skip ground pins - they are not hoverable
-        if (IsGroundPin(pin)) {
+        // Skip ground pins and NC pins - they are not hoverable
+        if (IsGroundPin(pin) || IsNCPin(pin)) {
             continue;
         }
         

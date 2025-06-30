@@ -105,6 +105,7 @@ private:
     void RenderGenericComponentOutline(float min_x, float min_y, float max_x, float max_y, float margin);
     void RenderConnectorComponentImGui(ImDrawList* draw_list, const BRDPart& part, const std::vector<BRDPin>& part_pins, float zoom, float offset_x, float offset_y);    // Pin utilities
     bool IsGroundPin(const BRDPin& pin);
+    bool IsNCPin(const BRDPin& pin);
     bool IsUnconnectedPin(const BRDPin& pin);
     bool IsConnectorComponent(const BRDPart& part);
     
