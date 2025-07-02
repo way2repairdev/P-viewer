@@ -417,10 +417,42 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                 current_pointer += *reinterpret_cast<uint32_t*>(&buf[current_pointer]) + 4; // Skip the block
                 break;
             }
-            case 0x05: { // Line Segment
-                // Not currently relevant for BRDPin
+            case 0x05: { // Line Segment - Part outline
                 if (current_pointer + 4 > buf.size()) return;
-                current_pointer += *reinterpret_cast<uint32_t*>(&buf[current_pointer]) + 4; // Skip the block
+                uint32_t line_block_size = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+                current_pointer += 4;
+                
+                // Process line segment data (expected format: similar to main line segments)
+                if (line_block_size >= 24 && current_pointer + line_block_size <= buf.size()) { // 6 uint32_t values = 24 bytes minimum
+                    uint32_t* line_data = reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+                    
+                    // Extract line segment data (assuming similar format to ParseLineSegmentBlockOriginal)
+                    // int32_t layer = line_data[0];  // Layer - may not be relevant for part outlines
+                    int32_t x1 = line_data[1];
+                    int32_t y1 = line_data[2]; 
+                    int32_t x2 = line_data[3];
+                    int32_t y2 = line_data[4];
+                    int32_t scale = line_data[5];
+                    
+                    // Use consistent scaling
+                    scale = 10000;
+                    
+                    // Create line segment points
+                    BRDPoint point1;
+                    point1.x = static_cast<int>(static_cast<double>(x1) / static_cast<double>(scale));
+                    point1.y = static_cast<int>(static_cast<double>(y1) / static_cast<double>(scale));
+                    BRDPoint point2;
+                    point2.x = static_cast<int>(static_cast<double>(x2) / static_cast<double>(scale));
+                    point2.y = static_cast<int>(static_cast<double>(y2) / static_cast<double>(scale));
+                    
+                    // Add to outline segments for rendering (these will be part outlines, not board outlines)
+                    outline_segments.push_back({point1, point2});
+                    
+                    std::cout << "DEBUG: Added part outline segment from (" << point1.x << ", " << point1.y 
+                             << ") to (" << point2.x << ", " << point2.y << ") for part: " << part_name << std::endl;
+                }
+                
+                current_pointer += line_block_size;
                 break;
             }
             case 0x06: { // Labels/Part Names
