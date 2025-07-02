@@ -282,56 +282,56 @@ void PCBRenderer::SetProjectionMatrix(int window_width, int window_height) {
     glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection);
 }
 
-void PCBRenderer::RenderOutline() {
-    if (pcb_data->outline_segments.empty()) {
-        return;
-    }
+// void PCBRenderer::RenderOutline() {
+//     if (pcb_data->outline_segments.empty()) {
+//         return;
+//     }
 
-    GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
-    glUniform1f(alpha_loc, settings.outline_alpha);
+//     GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
+//     glUniform1f(alpha_loc, settings.outline_alpha);
 
-    // Render outline segments
-    for (const auto& segment : pcb_data->outline_segments) {
-        DrawLine(static_cast<float>(segment.first.x), static_cast<float>(segment.first.y),
-                static_cast<float>(segment.second.x), static_cast<float>(segment.second.y),
-                settings.outline_color.r, settings.outline_color.g, settings.outline_color.b);
-    }
-}
+//     // Render outline segments
+//     for (const auto& segment : pcb_data->outline_segments) {
+//         DrawLine(static_cast<float>(segment.first.x), static_cast<float>(segment.first.y),
+//                 static_cast<float>(segment.second.x), static_cast<float>(segment.second.y),
+//                 settings.outline_color.r, settings.outline_color.g, settings.outline_color.b);
+//     }
+// }
 
-void PCBRenderer::RenderParts() {
-    GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
-    glUniform1f(alpha_loc, settings.part_alpha);
+// void PCBRenderer::RenderParts() {
+//     GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
+//     glUniform1f(alpha_loc, settings.part_alpha);
 
-    // Enhanced part rendering with proper outline detection
-    for (size_t i = 0; i < pcb_data->parts.size(); ++i) {
-        const auto& part = pcb_data->parts[i];
+//     // Enhanced part rendering with proper outline detection
+//     for (size_t i = 0; i < pcb_data->parts.size(); ++i) {
+//         const auto& part = pcb_data->parts[i];
         
-        // Get pins for this part
-        std::vector<BRDPin> part_pins;
-        for (const auto& pin : pcb_data->pins) {
-            if (pin.part == i + 1) { // Parts are 1-indexed
-                part_pins.push_back(pin);
-            }
-        }
+//         // Get pins for this part
+//         std::vector<BRDPin> part_pins;
+//         for (const auto& pin : pcb_data->pins) {
+//             if (pin.part == i + 1) { // Parts are 1-indexed
+//                 part_pins.push_back(pin);
+//             }
+//         }
         
-        if (part_pins.empty()) {
-            // Draw a simple rectangle for parts with no pins
-            float x = static_cast<float>(part.p1.x);
-            float y = static_cast<float>(part.p1.y);
-            float width = static_cast<float>(part.p2.x - part.p1.x);
-            float height = static_cast<float>(part.p2.y - part.p1.y);
+//         if (part_pins.empty()) {
+//             // Draw a simple rectangle for parts with no pins
+//             float x = static_cast<float>(part.p1.x);
+//             float y = static_cast<float>(part.p1.y);
+//             float width = static_cast<float>(part.p2.x - part.p1.x);
+//             float height = static_cast<float>(part.p2.y - part.p1.y);
             
-            if (width > 0 && height > 0) {
-                DrawRect(x, y, width, height, 
-                        settings.part_color.r, settings.part_color.g, settings.part_color.b);
-            }
-            continue;
-        }
+//             if (width > 0 && height > 0) {
+//                 DrawRect(x, y, width, height, 
+//                         settings.part_color.r, settings.part_color.g, settings.part_color.b);
+//             }
+//             continue;
+//         }
         
-        // Calculate part outline based on pins - enhanced logic
-        RenderPartOutline(part, part_pins);
-    }
-}
+//         // Calculate part outline based on pins - enhanced logic
+//         RenderPartOutline(part, part_pins);
+//     }
+// }
 
 void PCBRenderer::RenderPartOutline(const BRDPart& part, const std::vector<BRDPin>& part_pins) {
     if (part_pins.empty()) return;
@@ -419,55 +419,55 @@ float PCBRenderer::DeterminePinMargin(const BRDPart& part, const std::vector<BRD
 //     DrawLine(x, y + h, x, y, settings.part_color.r, settings.part_color.g, settings.part_color.b);
 // }
 
-void PCBRenderer::RenderPins() {
-    GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
-    glUniform1f(alpha_loc, settings.pin_alpha);
+// void PCBRenderer::RenderPins() {
+//     GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
+//     glUniform1f(alpha_loc, settings.pin_alpha);
 
-    for (const auto& pin : pcb_data->pins) {
-        float x = static_cast<float>(pin.pos.x);
-        float y = static_cast<float>(pin.pos.y);
+//     for (const auto& pin : pcb_data->pins) {
+//         float x = static_cast<float>(pin.pos.x);
+//         float y = static_cast<float>(pin.pos.y);
         
-        // Enhanced pin sizing based on component type
-        float radius = static_cast<float>(pin.radius);
-        if (radius < 1.0f) {
-            // Determine pin size based on part type
-            if (pin.part > 0 && pin.part <= pcb_data->parts.size()) {
-                const auto& part = pcb_data->parts[pin.part - 1];
+//         // Enhanced pin sizing based on component type
+//         float radius = static_cast<float>(pin.radius);
+//         if (radius < 1.0f) {
+//             // Determine pin size based on part type
+//             if (pin.part > 0 && pin.part <= pcb_data->parts.size()) {
+//                 const auto& part = pcb_data->parts[pin.part - 1];
                 
-                // Get all pins for this part to determine spacing
-                std::vector<BRDPin> part_pins;
-                for (const auto& p : pcb_data->pins) {
-                    if (p.part == pin.part) {
-                        part_pins.push_back(p);
-                    }
-                }
+//                 // Get all pins for this part to determine spacing
+//                 std::vector<BRDPin> part_pins;
+//                 for (const auto& p : pcb_data->pins) {
+//                     if (p.part == pin.part) {
+//                         part_pins.push_back(p);
+//                     }
+//                 }
                 
-                radius = DeterminePinSize(part, part_pins);
-            } else {
-                radius = 7.0f; // Default size
-            }
-        }
+//                 radius = DeterminePinSize(part, part_pins);
+//             } else {
+//                 radius = 7.0f; // Default size
+//             }
+//         }
         
-        // Draw pin with appropriate color
-        float pin_r = settings.pin_color.r;
-        float pin_g = settings.pin_color.g;
-        float pin_b = settings.pin_color.b;
-          // Color coding based on net connectivity
-        if (!pin.net.empty() && pin.net != "UNCONNECTED") {
-            // Connected pins get full color
-            DrawCircle(x, y, radius, pin_r, pin_g, pin_b);
-        } else {
-            // Unconnected pins get dimmed color
-            DrawCircle(x, y, radius, pin_r * 0.5f, pin_g * 0.5f, pin_b * 0.5f);
-        }
+//         // Draw pin with appropriate color
+//         float pin_r = settings.pin_color.r;
+//         float pin_g = settings.pin_color.g;
+//         float pin_b = settings.pin_color.b;
+//           // Color coding based on net connectivity
+//         if (!pin.net.empty() && pin.net != "UNCONNECTED") {
+//             // Connected pins get full color
+//             DrawCircle(x, y, radius, pin_r, pin_g, pin_b);
+//         } else {
+//             // Unconnected pins get dimmed color
+//             DrawCircle(x, y, radius, pin_r * 0.5f, pin_g * 0.5f, pin_b * 0.5f);
+//         }
         
-        // Draw pin name if available and zoom level is high enough
-        if (!pin.name.empty() && camera.zoom > 0.5f) {
-            // Draw a small dot to indicate named pin
-            DrawCircle(x, y, radius * 0.3f, 1.0f, 1.0f, 1.0f); // White center
-        }
-    }
-}
+//         // Draw pin name if available and zoom level is high enough
+//         if (!pin.name.empty() && camera.zoom > 0.5f) {
+//             // Draw a small dot to indicate named pin
+//             DrawCircle(x, y, radius * 0.3f, 1.0f, 1.0f, 1.0f); // White center
+//         }
+//     }
+// }
 
 float PCBRenderer::DeterminePinSize(const BRDPart& part, const std::vector<BRDPin>& part_pins) {
     if (part_pins.empty()) return 7.0f;
@@ -543,27 +543,27 @@ void PCBRenderer::DrawRect(float x, float y, float width, float height, float r,
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void PCBRenderer::DrawCircle(float x, float y, float radius, float r, float g, float b, float a) {
-    const int segments = 16;
-    std::vector<float> vertices;
+// void PCBRenderer::DrawCircle(float x, float y, float radius, float r, float g, float b, float a) {
+//     const int segments = 16;
+//     std::vector<float> vertices;
     
-    // Center vertex
-    vertices.insert(vertices.end(), {x, y, r, g, b});
+//     // Center vertex
+//     vertices.insert(vertices.end(), {x, y, r, g, b});
     
-    // Circle vertices
-    for (int i = 0; i <= segments; ++i) {
-        float angle = 2.0f * 3.14159f * i / segments;
-        float px = x + radius * std::cos(angle);
-        float py = y + radius * std::sin(angle);
-        vertices.insert(vertices.end(), {px, py, r, g, b});
-    }
+//     // Circle vertices
+//     for (int i = 0; i <= segments; ++i) {
+//         float angle = 2.0f * 3.14159f * i / segments;
+//         float px = x + radius * std::cos(angle);
+//         float py = y + radius * std::sin(angle);
+//         vertices.insert(vertices.end(), {px, py, r, g, b});
+//     }
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
+//     glBindVertexArray(vao);
+//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
 
-    glDrawArrays(GL_TRIANGLE_FAN, 0, static_cast<GLsizei>(vertices.size() / 5));
-}
+//     glDrawArrays(GL_TRIANGLE_FAN, 0, static_cast<GLsizei>(vertices.size() / 5));
+// }
 
 void PCBRenderer::RenderOutlineImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->outline_segments.empty()) {
