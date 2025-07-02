@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <cctype>
 
-// Simple vertex shader
+// Simple vertex shader - kept for reference but not used in ImGui rendering
 const char* vertex_shader_source = R"(
 #version 330 core
 layout (location = 0) in vec2 aPos;
@@ -21,7 +21,7 @@ void main() {
 }
 )";
 
-// Simple fragment shader
+// Simple fragment shader - kept for reference but not used in ImGui rendering
 const char* fragment_shader_source = R"(
 #version 330 core
 in vec3 vertexColor;
@@ -42,7 +42,10 @@ PCBRenderer::~PCBRenderer() {
 }
 
 bool PCBRenderer::Initialize() {
-    // Create shader program
+    // Create minimal OpenGL resources for compatibility
+    // Note: These resources aren't actively used for rendering anymore (ImGui handles the drawing)
+    // but are kept for compatibility with the OpenGL context
+    
     if (!CreateShaderProgram()) {
         LOG_ERROR("Failed to create shader program");
         return false;
@@ -206,8 +209,9 @@ void PCBRenderer::ZoomToFit(int window_width, int window_height) {
     camera.y = (min_point.y + max_point.y) * 0.5f;
 }
 
+// Legacy OpenGL shader functions - kept for reference but not needed for ImGui rendering
 bool PCBRenderer::CreateShaderProgram() {
-    // Compile shaders
+    // Creating a minimal shader program to satisfy OpenGL initialization
     GLuint vertex_shader = CompileShader(vertex_shader_source, GL_VERTEX_SHADER);
     if (!vertex_shader) return false;
     
@@ -261,26 +265,26 @@ GLuint PCBRenderer::CompileShader(const char* source, GLenum type) {
     return shader;
 }
 
-void PCBRenderer::SetProjectionMatrix(int window_width, int window_height) {
-    camera.aspect_ratio = static_cast<float>(window_width) / window_height;
+// void PCBRenderer::SetProjectionMatrix(int window_width, int window_height) {
+//     camera.aspect_ratio = static_cast<float>(window_width) / window_height;
     
-    // Create orthographic projection matrix
-    float left = camera.x - window_width / (2.0f * camera.zoom);
-    float right = camera.x + window_width / (2.0f * camera.zoom);
-    float bottom = camera.y - window_height / (2.0f * camera.zoom);
-    float top = camera.y + window_height / (2.0f * camera.zoom);
+//     // Create orthographic projection matrix
+//     float left = camera.x - window_width / (2.0f * camera.zoom);
+//     float right = camera.x + window_width / (2.0f * camera.zoom);
+//     float bottom = camera.y - window_height / (2.0f * camera.zoom);
+//     float top = camera.y + window_height / (2.0f * camera.zoom);
 
-    // Simple orthographic projection matrix
-    float projection[16] = {
-        2.0f / (right - left), 0.0f, 0.0f, -(right + left) / (right - left),
-        0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom),
-        0.0f, 0.0f, -1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
+//     // Simple orthographic projection matrix
+//     float projection[16] = {
+//         2.0f / (right - left), 0.0f, 0.0f, -(right + left) / (right - left),
+//         0.0f, 2.0f / (top - bottom), 0.0f, -(top + bottom) / (top - bottom),
+//         0.0f, 0.0f, -1.0f, 0.0f,
+//         0.0f, 0.0f, 0.0f, 1.0f
+//     };
 
-    GLint projection_loc = glGetUniformLocation(shader_program, "projection");
-    glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection);
-}
+//     GLint projection_loc = glGetUniformLocation(shader_program, "projection");
+//     glUniformMatrix4fv(projection_loc, 1, GL_FALSE, projection);
+// }
 
 // void PCBRenderer::RenderOutline() {
 //     if (pcb_data->outline_segments.empty()) {
@@ -333,29 +337,28 @@ void PCBRenderer::SetProjectionMatrix(int window_width, int window_height) {
 //     }
 // }
 
-void PCBRenderer::RenderPartOutline(const BRDPart& part, const std::vector<BRDPin>& part_pins) {
-    if (part_pins.empty()) return;
+// Legacy OpenGL part outline function - not used with ImGui rendering
+// void PCBRenderer::RenderPartOutline(const BRDPart& part, const std::vector<BRDPin>& part_pins) {
+//     if (part_pins.empty()) return;
     
-    // Calculate bounding box
-    float min_x = part_pins[0].pos.x, max_x = part_pins[0].pos.x;
-    float min_y = part_pins[0].pos.y, max_y = part_pins[0].pos.y;
+//     // Calculate bounding box
+//     float min_x = part_pins[0].pos.x, max_x = part_pins[0].pos.x;
+//     float min_y = part_pins[0].pos.y, max_y = part_pins[0].pos.y;
     
-    for (const auto& pin : part_pins) {
-        min_x = std::min(min_x, static_cast<float>(pin.pos.x));
-        max_x = std::max(max_x, static_cast<float>(pin.pos.x));
-        min_y = std::min(min_y, static_cast<float>(pin.pos.y));
-        max_y = std::max(max_y, static_cast<float>(pin.pos.y));
-    }
+//     for (const auto& pin : part_pins) {
+//         min_x = std::min(min_x, static_cast<float>(pin.pos.x));
+//         max_x = std::max(max_x, static_cast<float>(pin.pos.x));
+//         min_y = std::min(min_y, static_cast<float>(pin.pos.y));
+//         max_y = std::max(max_y, static_cast<float>(pin.pos.y));
+//     }
     
-    // Calculate distance and pin spacing for component type detection
-    float distance = std::sqrt((max_x - min_x) * (max_x - min_x) + (max_y - min_y) * (max_y - min_y));
-    int pin_count = part_pins.size();
+//     // Calculate distance and pin spacing for component type detection
+//     float distance = std::sqrt((max_x - min_x) * (max_x - min_x) + (max_y - min_y) * (max_y - min_y));
+//     int pin_count = part_pins.size();
     
-    // Component type detection and outline generation
-    float outline_margin = DeterminePinMargin(part, part_pins, distance);
-    
-    
-}
+//     // Component type detection and outline generation
+//     float outline_margin = DeterminePinMargin(part, part_pins, distance);
+// }
 
 float PCBRenderer::DeterminePinMargin(const BRDPart& part, const std::vector<BRDPin>& part_pins, float distance) {
     int pin_count = part_pins.size();
@@ -509,39 +512,39 @@ float PCBRenderer::DeterminePinSize(const BRDPart& part, const std::vector<BRDPi
     return 4.0f; // High pin count ICs
 }
 
-void PCBRenderer::DrawLine(float x1, float y1, float x2, float y2, float r, float g, float b, float a) {
-    // Create line vertices (position + color)
-    float vertices[] = {
-        x1, y1, r, g, b,
-        x2, y2, r, g, b
-    };
+// void PCBRenderer::DrawLine(float x1, float y1, float x2, float y2, float r, float g, float b, float a) {
+//     // Create line vertices (position + color)
+//     float vertices[] = {
+//         x1, y1, r, g, b,
+//         x2, y2, r, g, b
+//     };
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+//     glBindVertexArray(vao);
+//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
-    glDrawArrays(GL_LINES, 0, 2);
-}
+//     glDrawArrays(GL_LINES, 0, 2);
+// }
 
-void PCBRenderer::DrawRect(float x, float y, float width, float height, float r, float g, float b, float a) {
-    // Create rectangle vertices (as two triangles)
-    float vertices[] = {
-        // Triangle 1
-        x, y, r, g, b,
-        x + width, y, r, g, b,
-        x, y + height, r, g, b,
-        // Triangle 2
-        x + width, y, r, g, b,
-        x + width, y + height, r, g, b,
-        x, y + height, r, g, b
-    };
+// void PCBRenderer::DrawRect(float x, float y, float width, float height, float r, float g, float b, float a) {
+//     // Create rectangle vertices (as two triangles)
+//     float vertices[] = {
+//         // Triangle 1
+//         x, y, r, g, b,
+//         x + width, y, r, g, b,
+//         x, y + height, r, g, b,
+//         // Triangle 2
+//         x + width, y, r, g, b,
+//         x + width, y + height, r, g, b,
+//         x, y + height, r, g, b
+//     };
 
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+//     glBindVertexArray(vao);
+//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-}
+//     glDrawArrays(GL_TRIANGLES, 0, 6);
+// }
 
 // void PCBRenderer::DrawCircle(float x, float y, float radius, float r, float g, float b, float a) {
 //     const int segments = 16;
