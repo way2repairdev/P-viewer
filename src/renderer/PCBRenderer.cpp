@@ -354,8 +354,7 @@ void PCBRenderer::RenderPartOutline(const BRDPart& part, const std::vector<BRDPi
     // Component type detection and outline generation
     float outline_margin = DeterminePinMargin(part, part_pins, distance);
     
-    // Generate outline - always use generic for now, can be enhanced later
-    RenderGenericComponentOutline(min_x, min_y, max_x, max_y, outline_margin);
+    
 }
 
 float PCBRenderer::DeterminePinMargin(const BRDPart& part, const std::vector<BRDPin>& part_pins, float distance) {
@@ -391,34 +390,34 @@ float PCBRenderer::DeterminePinMargin(const BRDPart& part, const std::vector<BRD
     return 15.0f; // Large ICs - reduced from 25.0f
 }
 
-void PCBRenderer::RenderGenericComponentOutline(float min_x, float min_y, float max_x, float max_y, float margin) {
-    float x = min_x - margin;
-    float y = min_y - margin;
-    float w = (max_x - min_x) + 2 * margin;
-    float h = (max_y - min_y) + 2 * margin;
+// void PCBRenderer::RenderGenericComponentOutline(float min_x, float min_y, float max_x, float max_y, float margin) {
+//     float x = min_x - margin;
+//     float y = min_y - margin;
+//     float w = (max_x - min_x) + 2 * margin;
+//     float h = (max_y - min_y) + 2 * margin;
     
-    // Draw filled rectangle with transparency
-    std::vector<float> vertices = {
-        x, y,     settings.part_color.r, settings.part_color.g, settings.part_color.b,
-        x+w, y,   settings.part_color.r, settings.part_color.g, settings.part_color.b,
-        x+w, y+h, settings.part_color.r, settings.part_color.g, settings.part_color.b,
-        x, y,     settings.part_color.r, settings.part_color.g, settings.part_color.b,
-        x+w, y+h, settings.part_color.r, settings.part_color.g, settings.part_color.b,
-        x, y+h,   settings.part_color.r, settings.part_color.g, settings.part_color.b
-    };
+//     // Draw filled rectangle with transparency
+//     std::vector<float> vertices = {
+//         x, y,     settings.part_color.r, settings.part_color.g, settings.part_color.b,
+//         x+w, y,   settings.part_color.r, settings.part_color.g, settings.part_color.b,
+//         x+w, y+h, settings.part_color.r, settings.part_color.g, settings.part_color.b,
+//         x, y,     settings.part_color.r, settings.part_color.g, settings.part_color.b,
+//         x+w, y+h, settings.part_color.r, settings.part_color.g, settings.part_color.b,
+//         x, y+h,   settings.part_color.r, settings.part_color.g, settings.part_color.b
+//     };
     
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
+//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
     
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+//     glBindVertexArray(vao);
+//     glDrawArrays(GL_TRIANGLES, 0, 6);
     
-    // Draw outline with lines
-    DrawLine(x, y, x + w, y, settings.part_color.r, settings.part_color.g, settings.part_color.b);
-    DrawLine(x + w, y, x + w, y + h, settings.part_color.r, settings.part_color.g, settings.part_color.b);
-    DrawLine(x + w, y + h, x, y + h, settings.part_color.r, settings.part_color.g, settings.part_color.b);
-    DrawLine(x, y + h, x, y, settings.part_color.r, settings.part_color.g, settings.part_color.b);
-}
+//     // Draw outline with lines
+//     DrawLine(x, y, x + w, y, settings.part_color.r, settings.part_color.g, settings.part_color.b);
+//     DrawLine(x + w, y, x + w, y + h, settings.part_color.r, settings.part_color.g, settings.part_color.b);
+//     DrawLine(x + w, y + h, x, y + h, settings.part_color.r, settings.part_color.g, settings.part_color.b);
+//     DrawLine(x, y + h, x, y, settings.part_color.r, settings.part_color.g, settings.part_color.b);
+// }
 
 void PCBRenderer::RenderPins() {
     GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
@@ -641,8 +640,8 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                 // Adaptive outline thickness
                 float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));
                 
-                draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-                draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);                // Add component label - only if text fits completely inside component
+                // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
+                // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);                // Add component label - only if text fits completely inside component
                 float component_screen_size = std::max(x2 - x1, y2 - y1);
                 if (component_screen_size > 30.0f && !part.name.empty()) {
                     ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
@@ -751,8 +750,8 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             part_fill_color = IM_COL32(105 * color_boost, 105 * color_boost, 105 * color_boost, 0);
             part_outline_color = IM_COL32(169 * color_boost, 169 * color_boost, 169 * color_boost, 255);
         }        // Draw component body with adaptive outline thickness
-        float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));  // Thicker when zoomed out        draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-        draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);
+        float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));  // Thicker when zoomed out        // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
+        // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);
         
         // Add part name - only if text fits completely inside component
         float component_screen_size = std::max(x2 - x1, y2 - y1);
@@ -762,10 +761,9 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             // Check if text fits inside component with margin
             float text_margin = 4.0f;  // 2px margin on each side
             if (text_size.x <= (x2 - x1 - text_margin) && text_size.y <= (y2 - y1 - text_margin)) {
-                float text_x = (min_x + max_x) * 0.5f * zoom + offset_x;
-                float text_y = (y1 + y2) * 0.5f * zoom;  // Mirror Y
+                float text_x = (x1 + x2) * 0.5f;
+                float text_y = (y1 + y2) * 0.5f;
                 
-                // Calculate text position for centering
                 ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
                 
                 // Clip text rendering to component boundaries
@@ -776,7 +774,6 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                 ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 1, text_pos.y + text_size.y);
                 draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
                 
-                // Use high-contrast white text
                 draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
                 
                 // Restore clipping
