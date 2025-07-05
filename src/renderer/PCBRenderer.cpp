@@ -148,6 +148,7 @@ void PCBRenderer::Render(int window_width, int window_height) {
     RenderPartsImGui(draw_list, zoom, offset_x, offset_y);
     RenderCirclesImGui(draw_list, zoom, offset_x, offset_y);
     RenderRectanglesImGui(draw_list, zoom, offset_x, offset_y);
+    RenderOvalsImGui(draw_list, zoom, offset_x, offset_y);
     //RenderPinsImGui(draw_list, zoom, offset_x, offset_y);
 
     ImGui::End();
@@ -910,6 +911,85 @@ void PCBRenderer::RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float
                 255
             );
             draw_list->AddQuad(corners[0], corners[1], corners[2], corners[3], outline_color, 1.0f);
+        }
+    }
+}
+
+void PCBRenderer::RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+    if (!pcb_data || pcb_data->ovals.empty()) {
+        return;
+    }
+    
+    // Render all ovals
+    for (const auto& oval : pcb_data->ovals) {
+        // Transform oval center coordinates to screen space with Y-axis mirroring
+        float center_x = oval.center.x * zoom + offset_x;
+        float center_y = offset_y - oval.center.y * zoom;  // Mirror Y-axis
+        
+        // Scale dimensions by zoom factor
+        float width = oval.width * zoom;
+        float height = oval.height * zoom;
+        
+        // Ensure minimum visibility
+        if (width < 2.0f) width = 2.0f;
+        if (height < 2.0f) height = 2.0f;
+        
+        // Convert color components to ImU32 format (0-255 range)
+        ImU32 fill_color = IM_COL32(
+            (int)(oval.r * 255), 
+            (int)(oval.g * 255), 
+            (int)(oval.b * 255), 
+            (int)(oval.a * 255)
+        );
+        
+        // For oval rendering, we'll approximate with an ellipse using multiple segments
+        const int segments = 24; // Number of segments for smooth oval
+        
+        // Calculate semi-major and semi-minor axes
+        float semi_width = width / 2.0f;
+        float semi_height = height / 2.0f;
+        
+        // Convert rotation to radians
+        float rot_rad = oval.rotation * 3.14159265f / 180.0f;
+        float cos_rot = std::cos(rot_rad);
+        float sin_rot = std::sin(rot_rad);
+        
+        // Create points for the oval
+        std::vector<ImVec2> oval_points;
+        oval_points.reserve(segments);
+        
+        for (int i = 0; i < segments; ++i) {
+            float angle = 2.0f * 3.14159265f * i / segments;
+            
+            // Calculate point on unit ellipse
+            float x_ellipse = semi_width * std::cos(angle);
+            float y_ellipse = semi_height * std::sin(angle);
+            
+            // Apply rotation
+            float x_rotated = x_ellipse * cos_rot - y_ellipse * sin_rot;
+            float y_rotated = x_ellipse * sin_rot + y_ellipse * cos_rot;
+            
+            // Translate to center position
+            oval_points.push_back(ImVec2(center_x + x_rotated, center_y + y_rotated));
+        }
+        
+        // Draw filled oval using convex polygon
+        if (oval_points.size() >= 3) {
+            draw_list->AddConvexPolyFilled(oval_points.data(), oval_points.size(), fill_color);
+            
+            // Optional: Add outline for better visibility
+            ImU32 outline_color = IM_COL32(
+                (int)(oval.r * 180), 
+                (int)(oval.g * 180), 
+                (int)(oval.b * 180), 
+                255
+            );
+            
+            // Draw outline by connecting consecutive points
+            for (size_t i = 0; i < oval_points.size(); ++i) {
+                size_t next_i = (i + 1) % oval_points.size();
+                draw_list->AddLine(oval_points[i], oval_points[next_i], outline_color, 1.0f);
+            }
         }
     }
 }

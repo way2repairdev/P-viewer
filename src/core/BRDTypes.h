@@ -86,3 +86,16 @@ struct BRDRectangle {
     BRDRectangle(BRDPoint center, float width, float height, float rotation = 0.0f, float r = 1.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) 
         : center(center), width(width), height(height), rotation(rotation), r(r), g(g), b(b), a(a) {}
 };
+
+// PCB Oval structure for rendering filled ovals/ellipses
+struct BRDOval {
+    BRDPoint center;
+    float width = 0.0f;   // Width of the oval
+    float height = 0.0f;  // Height of the oval
+    float rotation = 0.0f; // Rotation in degrees
+    float r = 1.0f, g = 0.0f, b = 0.0f, a = 1.0f; // Default red color
+    
+    BRDOval() = default;
+    BRDOval(BRDPoint center, float width, float height, float rotation = 0.0f, float r = 1.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) 
+        : center(center), width(width), height(height), rotation(rotation), r(r), g(g), b(b), a(a) {}
+};

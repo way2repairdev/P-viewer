@@ -164,6 +164,7 @@ bool XZZPCBFile::ParseXZZPCBOriginal(std::vector<char>& buf) {
     TranslatePins();
     TranslateCircles();
     TranslateRectangles();
+    TranslateOvals();
 
     // Update counts
     num_parts = parts.size();
@@ -174,6 +175,7 @@ bool XZZPCBFile::ParseXZZPCBOriginal(std::vector<char>& buf) {
     std::cout << "  Outline segments: " << outline_segments.size() << std::endl;
     std::cout << "  Circles: " << circles.size() << std::endl;
     std::cout << "  Rectangles: " << rectangles.size() << std::endl;
+    std::cout << "  Ovals: " << ovals.size() << std::endl;
     
     // Debug: Print first few pin coordinates
     if (!pins.empty()) {
@@ -516,16 +518,30 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                     //current_pointer += 4;
                     
                     if (pin_shape == 1) {
-                        // Circular pin
-                        float diameter = static_cast<float>(height_radius_raw) / 10000.0f; // Apply same scaling as coordinates
-                        float radius = diameter / 2.0f;
-                        
-                        // Create circle with red fill color at pin position
-                        BRDCircle circle(pin.pos, radius, 1.0f, 0.0f, 0.0f, 1.0f); // Red color (R=1.0, G=0.0, B=0.0, A=1.0)
-                        circles.push_back(circle);
-                        
-                        //std::cout << "DEBUG: Added circle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
-                                 //<< ") with diameter " << diameter << " (radius " << radius << ")" << std::endl;
+                        // Check if it's circular (height == width) or oval (height != width)
+                        if (height_radius_raw == width_raw) {
+                            // Circular pin - height and width are equal
+                            float diameter = static_cast<float>(height_radius_raw) / 10000.0f; // Apply same scaling as coordinates
+                            float radius = diameter / 2.0f;
+                            
+                            // Create circle with red fill color at pin position
+                            BRDCircle circle(pin.pos, radius, 1.0f, 0.0f, 0.0f, 1.0f); // Red color (R=1.0, G=0.0, B=0.0, A=1.0)
+                            circles.push_back(circle);
+                            
+                            //std::cout << "DEBUG: Added circle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
+                                     //<< ") with diameter " << diameter << " (radius " << radius << ")" << std::endl;
+                        } else {
+                            // Oval pin - height and width are different
+                            float height = static_cast<float>(height_radius_raw) / 10000.0f; // Apply same scaling as coordinates
+                            float width = static_cast<float>(width_raw) / 10000.0f;
+                            
+                            // Create oval with red fill color at pin position
+                            BRDOval oval(pin.pos, width, height, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f); // Red color
+                            ovals.push_back(oval);
+                            
+                            //std::cout << "DEBUG: Added oval for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
+                                     //<< ") with width " << width << ", height " << height << std::endl;
+                        }
                     } else {
                         // If pin_rotation is 900000, treat as 0 (no rotation), else keep as is
                         if (pin_rotation == 0 || pin_rotation == 90 || pin_rotation == 180 || pin_rotation == 270 || pin_rotation == 360) {
@@ -815,6 +831,12 @@ void XZZPCBFile::TranslateCircles() {
 void XZZPCBFile::TranslateRectangles() {
     for (auto& rectangle : rectangles) {
         TranslatePoints(rectangle.center);
+    }
+}
+
+void XZZPCBFile::TranslateOvals() {
+    for (auto& oval : ovals) {
+        TranslatePoints(oval.center);
     }
 }
 

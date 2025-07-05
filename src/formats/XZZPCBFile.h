@@ -57,4 +57,5 @@ private:
     void TranslatePins();
     void TranslateCircles();
     void TranslateRectangles();
+    void TranslateOvals();
 };
