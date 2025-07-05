@@ -920,7 +920,7 @@ void PCBRenderer::RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offs
         return;
     }
     
-    // Render all ovals
+    // Render all ovals as stadium shapes (rounded rectangles)
     for (const auto& oval : pcb_data->ovals) {
         // Transform oval center coordinates to screen space with Y-axis mirroring
         float center_x = oval.center.x * zoom + offset_x;
@@ -942,40 +942,84 @@ void PCBRenderer::RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offs
             (int)(oval.a * 255)
         );
         
-        // For oval rendering, we'll approximate with an ellipse using multiple segments
-        const int segments = 24; // Number of segments for smooth oval
-        
-        // Calculate semi-major and semi-minor axes
-        float semi_width = width / 2.0f;
-        float semi_height = height / 2.0f;
+        // Stadium shape: rectangle with semicircular ends
+        // The radius of the semicircles is half the smaller dimension
+        float radius = std::min(width, height) / 2.0f;
         
         // Convert rotation to radians
         float rot_rad = oval.rotation * 3.14159265f / 180.0f;
         float cos_rot = std::cos(rot_rad);
         float sin_rot = std::sin(rot_rad);
         
-        // Create points for the oval
-        std::vector<ImVec2> oval_points;
-        oval_points.reserve(segments);
+        // Create stadium shape points
+        std::vector<ImVec2> stadium_points;
+        const int semicircle_segments = 12; // Segments per semicircle
         
-        for (int i = 0; i < segments; ++i) {
-            float angle = 2.0f * 3.14159265f * i / segments;
+        if (width > height) {
+            // Horizontal stadium: longer in width
+            float rect_width = width - 2.0f * radius;  // Width of central rectangle
+            float rect_height = height;
             
-            // Calculate point on unit ellipse
-            float x_ellipse = semi_width * std::cos(angle);
-            float y_ellipse = semi_height * std::sin(angle);
+            // Left semicircle (from bottom to top)
+            for (int i = 0; i <= semicircle_segments; ++i) {
+                float angle = 3.14159265f * 0.5f + 3.14159265f * i / semicircle_segments; // π/2 to 3π/2
+                float x_local = -rect_width / 2.0f + radius * std::cos(angle);
+                float y_local = radius * std::sin(angle);
+                
+                // Apply rotation
+                float x_rotated = x_local * cos_rot - y_local * sin_rot;
+                float y_rotated = x_local * sin_rot + y_local * cos_rot;
+                
+                stadium_points.push_back(ImVec2(center_x + x_rotated, center_y + y_rotated));
+            }
             
-            // Apply rotation
-            float x_rotated = x_ellipse * cos_rot - y_ellipse * sin_rot;
-            float y_rotated = x_ellipse * sin_rot + y_ellipse * cos_rot;
+            // Right semicircle (from top to bottom)
+            for (int i = 0; i <= semicircle_segments; ++i) {
+                float angle = 3.14159265f * 1.5f + 3.14159265f * i / semicircle_segments; // 3π/2 to 5π/2
+                float x_local = rect_width / 2.0f + radius * std::cos(angle);
+                float y_local = radius * std::sin(angle);
+                
+                // Apply rotation
+                float x_rotated = x_local * cos_rot - y_local * sin_rot;
+                float y_rotated = x_local * sin_rot + y_local * cos_rot;
+                
+                stadium_points.push_back(ImVec2(center_x + x_rotated, center_y + y_rotated));
+            }
+        } else {
+            // Vertical stadium: longer in height
+            float rect_width = width;
+            float rect_height = height - 2.0f * radius;  // Height of central rectangle
             
-            // Translate to center position
-            oval_points.push_back(ImVec2(center_x + x_rotated, center_y + y_rotated));
+            // Bottom semicircle (from left to right)
+            for (int i = 0; i <= semicircle_segments; ++i) {
+                float angle = 3.14159265f + 3.14159265f * i / semicircle_segments; // π to 2π
+                float x_local = radius * std::cos(angle);
+                float y_local = -rect_height / 2.0f + radius * std::sin(angle);
+                
+                // Apply rotation
+                float x_rotated = x_local * cos_rot - y_local * sin_rot;
+                float y_rotated = x_local * sin_rot + y_local * cos_rot;
+                
+                stadium_points.push_back(ImVec2(center_x + x_rotated, center_y + y_rotated));
+            }
+            
+            // Top semicircle (from right to left)
+            for (int i = 0; i <= semicircle_segments; ++i) {
+                float angle = 2.0f * 3.14159265f + 3.14159265f * i / semicircle_segments; // 2π to 3π
+                float x_local = radius * std::cos(angle);
+                float y_local = rect_height / 2.0f + radius * std::sin(angle);
+                
+                // Apply rotation
+                float x_rotated = x_local * cos_rot - y_local * sin_rot;
+                float y_rotated = x_local * sin_rot + y_local * cos_rot;
+                
+                stadium_points.push_back(ImVec2(center_x + x_rotated, center_y + y_rotated));
+            }
         }
         
-        // Draw filled oval using convex polygon
-        if (oval_points.size() >= 3) {
-            draw_list->AddConvexPolyFilled(oval_points.data(), oval_points.size(), fill_color);
+        // Draw filled stadium shape using convex polygon
+        if (stadium_points.size() >= 3) {
+            draw_list->AddConvexPolyFilled(stadium_points.data(), stadium_points.size(), fill_color);
             
             // Optional: Add outline for better visibility
             ImU32 outline_color = IM_COL32(
@@ -986,9 +1030,9 @@ void PCBRenderer::RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offs
             );
             
             // Draw outline by connecting consecutive points
-            for (size_t i = 0; i < oval_points.size(); ++i) {
-                size_t next_i = (i + 1) % oval_points.size();
-                draw_list->AddLine(oval_points[i], oval_points[next_i], outline_color, 1.0f);
+            for (size_t i = 0; i < stadium_points.size(); ++i) {
+                size_t next_i = (i + 1) % stadium_points.size();
+                draw_list->AddLine(stadium_points[i], stadium_points[next_i], outline_color, 1.0f);
             }
         }
     }
