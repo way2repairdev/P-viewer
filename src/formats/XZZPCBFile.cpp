@@ -531,12 +531,18 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                             //std::cout << "DEBUG: Added circle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
                                      //<< ") with diameter " << diameter << " (radius " << radius << ")" << std::endl;
                         } else {
+
+                            // If pin_rotation is 900000, treat as 0 (no rotation), else keep as is
+                        if (pin_rotation == 0 || pin_rotation == 90 || pin_rotation == 180 || pin_rotation == 270 || pin_rotation == 360) {
+                            pin_rotation += 90;
+                        }
+                        
                             // Oval pin - height and width are different
                             float height = static_cast<float>(height_radius_raw) / 10000.0f; // Apply same scaling as coordinates
                             float width = static_cast<float>(width_raw) / 10000.0f;
                             
                             // Create oval with red fill color at pin position
-                            BRDOval oval(pin.pos, width, height, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f); // Red color
+                            BRDOval oval(pin.pos, width, height, static_cast<float>(pin_rotation), 1.0f, 0.0f, 0.0f, 1.0f); // Red color
                             ovals.push_back(oval);
                             
                             //std::cout << "DEBUG: Added oval for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
