@@ -567,7 +567,7 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                     }
                 }
                 
-                current_pointer += 32;
+                current_pointer += 6;
 
                 if (current_pointer + 4 > buf.size()) return;
                 uint32_t net_index = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
@@ -626,15 +626,56 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
     current_pointer += 4;
     uint32_t y_origin = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
     current_pointer += 4;
-    current_pointer += 8; // inner_diameter + unknown1
+    current_pointer += 4; // inner_diameter
+
+    uint32_t pin_rotation = *reinterpret_cast<uint32_t*>(&buf[current_pointer]) / 10000;
+
+    current_pointer += 4; // rotation
     uint32_t name_length = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
     current_pointer += 4;
     if (current_pointer + name_length > buf.size()) return;
     std::string name(reinterpret_cast<char*>(&buf[current_pointer]), name_length);
     current_pointer += name_length;
+    if (current_pointer + 8 > buf.size()) return;
+    uint32_t width_raw = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+    current_pointer += 4;
+    uint32_t height_raw = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+    current_pointer += 4;
+    uint8_t pin_shape = *reinterpret_cast<uint8_t*>(&buf[current_pointer]);
+
+    // Optionally, store or use width_raw and height_raw for rendering test pad shapes
     current_pointer = buf.size() - 4;
     if (current_pointer >= buf.size()) return;
-    uint32_t net_index = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);    part.name = "..." + name; // To make it get the kPinTypeTestPad type
+    uint32_t net_index = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+
+    // Create test pad shapes based on width and height
+    float width = static_cast<float>(width_raw) / 10000.0f;
+    float height = static_cast<float>(height_raw) / 10000.0f;
+
+    std::cout << "Test Pad Height '" << height << "' Width '" << width << "' Rotation '" << pin_rotation << "'" << std::endl;
+
+    BRDPoint test_pad_pos;
+    test_pad_pos.x = static_cast<int>(static_cast<double>(x_origin / 10000.0));
+    test_pad_pos.y = static_cast<int>(static_cast<double>(y_origin / 10000.0));
+    
+    if (pin_shape == 1) {
+        // Create circle for test pad when width equals height
+        float radius = width / 2.0f;
+        BRDCircle circle(test_pad_pos, radius, 0.0f, 1.0f, 0.0f, 1.0f); // Green color for test pads
+        circles.push_back(circle);
+        
+        //std::cout << "DEBUG: Added circle test pad '" << name << "' at (" << test_pad_pos.x << ", " << test_pad_pos.y 
+                 //<< ") with radius " << radius << std::endl;
+    } else {
+
+        
+        // Create rectangle for test pad when width differs from height
+        BRDRectangle rectangle(test_pad_pos, width, height, static_cast<float>(pin_rotation), 0.0f, 1.0f, 0.0f, 1.0f); // Green color for test pads
+        rectangles.push_back(rectangle);
+        
+        //std::cout << "DEBUG: Added rectangle test pad '" << name << "' at (" << test_pad_pos.x << ", " << test_pad_pos.y 
+                 //<< ") with width " << width << ", height " << height << std::endl;
+    }    part.name = "..." + name; // To make it get the kPinTypeTestPad type
     part.mounting_side = BRDPartMountingSide::Top;
     part.part_type = BRDPartType::SMD;
 
