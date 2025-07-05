@@ -62,3 +62,27 @@ struct BRDNail {
     BRDPartMountingSide side = BRDPartMountingSide::Top;
     std::string net = "UNCONNECTED";
 };
+
+// PCB Circle structure for rendering filled circles
+struct BRDCircle {
+    BRDPoint center;
+    float radius = 0.0f;
+    float r = 1.0f, g = 0.0f, b = 0.0f, a = 1.0f; // Default red color
+    
+    BRDCircle() = default;
+    BRDCircle(BRDPoint center, float radius, float r = 1.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) 
+        : center(center), radius(radius), r(r), g(g), b(b), a(a) {}
+};
+
+// PCB Rectangle structure for rendering filled rectangles
+struct BRDRectangle {
+    BRDPoint center;
+    float width = 0.0f;
+    float height = 0.0f;
+    float rotation = 0.0f; // Rotation in degrees
+    float r = 1.0f, g = 0.0f, b = 0.0f, a = 1.0f; // Default red color
+    
+    BRDRectangle() = default;
+    BRDRectangle(BRDPoint center, float width, float height, float rotation = 0.0f, float r = 1.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) 
+        : center(center), width(width), height(height), rotation(rotation), r(r), g(g), b(b), a(a) {}
+};

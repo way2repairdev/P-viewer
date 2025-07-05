@@ -53,6 +53,8 @@ public:
     void RenderOutlineImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderPartsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
+    void RenderCirclesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
+    void RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     
     // Camera controls
     void SetCamera(float x, float y, float zoom);

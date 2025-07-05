@@ -21,6 +21,8 @@ public:
     std::vector<BRDPart> parts;                                     // Components
     std::vector<BRDPin> pins;                                       // Pins/pads
     std::vector<BRDNail> nails;                                     // Test points
+    std::vector<BRDCircle> circles;                                 // Circles for rendering
+    std::vector<BRDRectangle> rectangles;                           // Rectangles for rendering
 
     // Status
     bool valid = false;

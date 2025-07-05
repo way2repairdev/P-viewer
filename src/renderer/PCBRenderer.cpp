@@ -146,7 +146,9 @@ void PCBRenderer::Render(int window_width, int window_height) {
     }    // Use structured ImGui rendering methods (like original OpenBoardView)
     RenderOutlineImGui(draw_list, zoom, offset_x, offset_y);
     RenderPartsImGui(draw_list, zoom, offset_x, offset_y);
-    RenderPinsImGui(draw_list, zoom, offset_x, offset_y);
+    RenderCirclesImGui(draw_list, zoom, offset_x, offset_y);
+    RenderRectanglesImGui(draw_list, zoom, offset_x, offset_y);
+    //RenderPinsImGui(draw_list, zoom, offset_x, offset_y);
 
     ImGui::End();
 }
@@ -786,6 +788,130 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
     }
     
     // Parts rendering complete
+}
+
+void PCBRenderer::RenderCirclesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+    if (!pcb_data || pcb_data->circles.empty()) {
+        return;
+    }
+    
+    // Render all circles with red fill
+    for (const auto& circle : pcb_data->circles) {
+        // Transform circle center coordinates to screen space with Y-axis mirroring
+        float x = circle.center.x * zoom + offset_x;
+        float y = offset_y - circle.center.y * zoom;  // Mirror Y-axis
+        
+        // Scale radius by zoom factor
+        float radius = circle.radius * zoom;
+        
+        // Ensure minimum visibility
+        if (radius < 1.0f) radius = 1.0f;
+        
+        // Convert color components to ImU32 format (0-255 range)
+        ImU32 fill_color = IM_COL32(
+            (int)(circle.r * 255), 
+            (int)(circle.g * 255), 
+            (int)(circle.b * 255), 
+            (int)(circle.a * 255)
+        );
+        
+        // Draw filled circle
+        draw_list->AddCircleFilled(ImVec2(x, y), radius, fill_color);
+        
+        // Optional: Add a darker outline for better visibility
+        ImU32 outline_color = IM_COL32(
+            (int)(circle.r * 180), 
+            (int)(circle.g * 180), 
+            (int)(circle.b * 180), 
+            255
+        );
+        draw_list->AddCircle(ImVec2(x, y), radius, outline_color, 0, 1.0f);
+    }
+}
+
+void PCBRenderer::RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+    if (!pcb_data || pcb_data->rectangles.empty()) {
+        return;
+    }
+    
+    // Render all rectangles with red fill
+    for (const auto& rectangle : pcb_data->rectangles) {
+        // Transform rectangle center coordinates to screen space with Y-axis mirroring
+        float center_x = rectangle.center.x * zoom + offset_x;
+        float center_y = offset_y - rectangle.center.y * zoom;  // Mirror Y-axis
+        
+        // Scale dimensions by zoom factor
+        float width = rectangle.width * zoom;
+        float height = rectangle.height * zoom;
+        
+        // Ensure minimum visibility
+        if (width < 2.0f) width = 2.0f;
+        if (height < 2.0f) height = 2.0f;
+        
+        // Convert color components to ImU32 format (0-255 range)
+        ImU32 fill_color = IM_COL32(
+            (int)(rectangle.r * 255), 
+            (int)(rectangle.g * 255), 
+            (int)(rectangle.b * 255), 
+            (int)(rectangle.a * 255)
+        );
+        
+        if (rectangle.rotation == 0.0f) {
+            // No rotation - simple axis-aligned rectangle
+            float half_width = width / 2.0f;
+            float half_height = height / 2.0f;
+            
+            ImVec2 top_left(center_x - half_width, center_y - half_height);
+            ImVec2 bottom_right(center_x + half_width, center_y + half_height);
+            
+            draw_list->AddRectFilled(top_left, bottom_right, fill_color);
+            
+            // Optional: Add outline for better visibility
+            ImU32 outline_color = IM_COL32(
+                (int)(rectangle.r * 180), 
+                (int)(rectangle.g * 180), 
+                (int)(rectangle.b * 180), 
+                255
+            );
+            draw_list->AddRect(top_left, bottom_right, outline_color, 0.0f, 0, 1.0f);
+        } else {
+            // Rotated rectangle - draw as quad with rotation
+            float half_width = width / 2.0f;
+            float half_height = height / 2.0f;
+            
+            // Convert rotation to radians
+            float rot_rad = rectangle.rotation * 3.14159265f / 180.0f;
+            float cos_rot = std::cos(rot_rad);
+            float sin_rot = std::sin(rot_rad);
+            
+            // Calculate the four corners of the rotated rectangle
+            ImVec2 corners[4];
+            
+            // Corner offsets before rotation
+            float dx1 = -half_width, dy1 = -half_height; // Top-left
+            float dx2 = half_width,  dy2 = -half_height; // Top-right
+            float dx3 = half_width,  dy3 = half_height;  // Bottom-right
+            float dx4 = -half_width, dy4 = half_height;  // Bottom-left
+            
+            // Apply rotation and translation
+            corners[0] = ImVec2(center_x + dx1 * cos_rot - dy1 * sin_rot, center_y + dx1 * sin_rot + dy1 * cos_rot);
+            corners[1] = ImVec2(center_x + dx2 * cos_rot - dy2 * sin_rot, center_y + dx2 * sin_rot + dy2 * cos_rot);
+            corners[2] = ImVec2(center_x + dx3 * cos_rot - dy3 * sin_rot, center_y + dx3 * sin_rot + dy3 * cos_rot);
+            corners[3] = ImVec2(center_x + dx4 * cos_rot - dy4 * sin_rot, center_y + dx4 * sin_rot + dy4 * cos_rot);
+            
+            // Draw the quad as two triangles
+            draw_list->AddQuadFilled(corners[0], corners[1], corners[2], corners[3], fill_color);
+            
+            // Optional: Add outline for better visibility
+            ImU32 outline_color = IM_COL32(
+                (int)(rectangle.r * 180), 
+                (int)(rectangle.g * 180), 
+                (int)(rectangle.b * 180), 
+                255
+            );
+            draw_list->AddQuad(corners[0], corners[1], corners[2], corners[3], outline_color, 1.0f);
+        }
+    }
 }
 
 bool PCBRenderer::IsGroundPin(const BRDPin& pin) {

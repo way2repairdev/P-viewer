@@ -55,4 +55,6 @@ private:
     void TranslateSegments();
     void TranslatePoints(BRDPoint& point) const;
     void TranslatePins();
+    void TranslateCircles();
+    void TranslateRectangles();
 };

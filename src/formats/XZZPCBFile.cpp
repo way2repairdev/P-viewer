@@ -162,6 +162,8 @@ bool XZZPCBFile::ParseXZZPCBOriginal(std::vector<char>& buf) {
     FindXYTranslation();
     TranslateSegments();
     TranslatePins();
+    TranslateCircles();
+    TranslateRectangles();
 
     // Update counts
     num_parts = parts.size();
@@ -170,6 +172,8 @@ bool XZZPCBFile::ParseXZZPCBOriginal(std::vector<char>& buf) {
     std::cout << "  Parts: " << num_parts << std::endl;
     std::cout << "  Pins: " << num_pins << std::endl;
     std::cout << "  Outline segments: " << outline_segments.size() << std::endl;
+    std::cout << "  Circles: " << circles.size() << std::endl;
+    std::cout << "  Rectangles: " << rectangles.size() << std::endl;
     
     // Debug: Print first few pin coordinates
     if (!pins.empty()) {
@@ -448,8 +452,8 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                     // Add to outline segments for rendering (these will be part outlines, not board outlines)
                     outline_segments.push_back({point1, point2});
                     
-                    std::cout << "DEBUG: Added part outline segment from (" << point1.x << ", " << point1.y 
-                             << ") to (" << point2.x << ", " << point2.y << ") for part: " << part_name << std::endl;
+                    //std::cout << "DEBUG: Added part outline segment from (" << point1.x << ", " << point1.y 
+                             //<< ") to (" << point2.x << ", " << point2.y << ") for part: " << part_name << std::endl;
                 }
                 
                 current_pointer += line_block_size;
@@ -477,7 +481,11 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                 current_pointer += 4;
                 pin.pos.y = *reinterpret_cast<uint32_t*>(&buf[current_pointer]) / 10000;
                 current_pointer += 4;
-                current_pointer += 8; // currently unknown
+                
+                current_pointer += 4; // currently unknown
+                uint32_t pin_rotation = *reinterpret_cast<uint32_t*>(&buf[current_pointer]) / 10000; // Rotation in degrees
+                //pin_rotation = pin_rotation + 90; // Adjust to match BRD coordinate system (0 degrees is right, 90 degrees is up)
+                current_pointer += 4;
 
                 if (current_pointer + 4 > buf.size()) return;
                 uint32_t pin_name_size = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
@@ -488,9 +496,61 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                 pin.snum = pin_name;
                 
                 // Debug: Log pin data loading
-                std::cout << "DEBUG: Loaded pin - name: '" << pin_name << "', setting snum to: '" << pin.snum << "'" << std::endl;
+                //std::cout << "DEBUG: Loaded pin - name: '" << pin_name << "', setting snum to: '" << pin.snum << "'" << std::endl;
+                //std::cout << "Pin rotation: '" << pin_rotation << "'" << std::endl;
+
 
                 current_pointer += pin_name_size;
+                uint32_t height_radius_raw = *reinterpret_cast<uint32_t*>(&buf[current_pointer]); // Height for rectangular pins, radius for circular pins
+                current_pointer += 4;
+                uint32_t width_raw = *reinterpret_cast<uint32_t*>(&buf[current_pointer]); // Width for rectangular pins
+                current_pointer += 22;
+                uint8_t pin_shape = *reinterpret_cast<uint8_t*>(&buf[current_pointer]); // Shape for pins
+
+
+
+                
+                // Extract shape data based on pin_rotation
+                if (current_pointer + 4 <= buf.size()) {
+                    //uint32_t height_radius_raw = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+                    //current_pointer += 4;
+                    
+                    if (pin_shape == 1) {
+                        // Circular pin
+                        float diameter = static_cast<float>(height_radius_raw) / 10000.0f; // Apply same scaling as coordinates
+                        float radius = diameter / 2.0f;
+                        
+                        // Create circle with red fill color at pin position
+                        BRDCircle circle(pin.pos, radius, 1.0f, 0.0f, 0.0f, 1.0f); // Red color (R=1.0, G=0.0, B=0.0, A=1.0)
+                        circles.push_back(circle);
+                        
+                        //std::cout << "DEBUG: Added circle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
+                                 //<< ") with diameter " << diameter << " (radius " << radius << ")" << std::endl;
+                    } else {
+                        // If pin_rotation is 900000, treat as 0 (no rotation), else keep as is
+                        if (pin_rotation == 0 || pin_rotation == 90 || pin_rotation == 180 || pin_rotation == 270 || pin_rotation == 360) {
+                            pin_rotation += 90;
+                        }
+                       
+                        
+                        // Rectangular pin - height_radius_raw is height, need to get width next
+                        float height = static_cast<float>(height_radius_raw) / 10000.0f; // Apply same scaling as coordinates
+                        
+                        // Get width (next 4 bytes)
+                        if (current_pointer + 4 <= buf.size()) {
+                            //uint32_t width_raw = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+                            float width = static_cast<float>(width_raw) / 10000.0f;
+                            
+                            // Create rectangle with red fill color at pin position
+                            BRDRectangle rectangle(pin.pos, width, height, static_cast<float>(pin_rotation), 1.0f, 0.0f, 0.0f, 1.0f); // Red color
+                            rectangles.push_back(rectangle);
+                            
+                            //std::cout << "DEBUG: Added rectangle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
+                                     //<< ") with width " << width << ", height " << height << ", rotation " << pin_rotation << "°" << "shape: " << pin_shape <<std::endl;
+                        }
+                    }
+                }
+                
                 current_pointer += 32;
 
                 if (current_pointer + 4 > buf.size()) return;
@@ -565,7 +625,7 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
     pin.snum = name;
     
     // Debug: Log pin data loading for test pad
-    std::cout << "DEBUG: Loaded test pad pin - name: '" << name << "', setting snum to: '" << pin.snum << "'" << std::endl;
+    //std::cout << "DEBUG: Loaded test pad pin - name: '" << name << "', setting snum to: '" << pin.snum << "'" << std::endl;
 
     pin.side = BRDPinSide::Top;
     pin.pos.x = static_cast<int>(static_cast<double>(x_origin / 10000.0));
@@ -743,6 +803,18 @@ void XZZPCBFile::TranslateSegments() {
 void XZZPCBFile::TranslatePins() {
     for (auto& pin : pins) {
         TranslatePoints(pin.pos);
+    }
+}
+
+void XZZPCBFile::TranslateCircles() {
+    for (auto& circle : circles) {
+        TranslatePoints(circle.center);
+    }
+}
+
+void XZZPCBFile::TranslateRectangles() {
+    for (auto& rectangle : rectangles) {
+        TranslatePoints(rectangle.center);
     }
 }
 
