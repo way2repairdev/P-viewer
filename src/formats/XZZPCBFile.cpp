@@ -337,7 +337,7 @@ void XZZPCBFile::ParseArcBlockOriginal(std::vector<uint32_t>& buf) {
     int32_t scale = buf[6];
     // int32_t unknown_arc = buf[7];
     scale = 10000;
-    if (layer != 28) {
+    if (layer != 28 && layer != 17) {
         return;
     }
 
@@ -361,7 +361,7 @@ void XZZPCBFile::ParseLineSegmentBlockOriginal(std::vector<uint32_t>& buf) {
     int32_t scale = buf[5];
     scale = 10000;
     // int32_t trace_net_index = buf[6];	/* unused */
-    if (layer != 28) {
+    if (layer != 28 && layer != 17) {
         return;
     }
 
