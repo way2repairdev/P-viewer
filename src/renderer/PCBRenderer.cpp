@@ -581,7 +581,7 @@ void PCBRenderer::RenderOutlineImGui(ImDrawList* draw_list, float zoom, float of
     ImU32 outline_color = IM_COL32(255, 255, 255, 255);
     
     // Adaptive line thickness based on zoom level
-    float line_thickness = std::max(1.0f, std::min(4.0f, 2.0f / zoom));  // Thicker when zoomed out
+    float line_thickness = std::max(1.0f, std::min(4.0f, zoom * 2.0f));  // Thicker when zoomed in
     
     for (const auto& segment : pcb_data->outline_segments) {
         // Transform coordinates from PCB space to screen space with Y-axis mirroring
@@ -644,7 +644,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                 ImU32 part_outline_color = IM_COL32(169, 169, 169, 255);  // Dark gray outline
                 
                 // Adaptive outline thickness
-                float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));
+                float component_outline_thickness = std::max(1.0f, std::min(3.0f, zoom * 2.0f));
                 
                 // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
                 // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);                // Add component label - only if text fits completely inside component
@@ -756,7 +756,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
             part_fill_color = IM_COL32(105 * color_boost, 105 * color_boost, 105 * color_boost, 0);
             part_outline_color = IM_COL32(169 * color_boost, 169 * color_boost, 169 * color_boost, 255);
         }        // Draw component body with adaptive outline thickness
-        float component_outline_thickness = std::max(1.0f, std::min(3.0f, 2.0f / zoom));  // Thicker when zoomed out        // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
+        float component_outline_thickness = std::max(1.0f, std::min(3.0f, zoom * 2.0f));  // Thicker when zoomed in        // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
         // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);
         
         // Add part name - only if text fits completely inside component
