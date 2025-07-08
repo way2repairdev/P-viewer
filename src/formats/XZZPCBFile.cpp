@@ -650,15 +650,18 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
     uint8_t pin_shape = *reinterpret_cast<uint8_t*>(&buf[current_pointer]);
 
     // Optionally, store or use width_raw and height_raw for rendering test pad shapes
-    current_pointer = buf.size() - 4;
+    current_pointer = buf.size() - 12;
+    std::cout << "Buffer Size '" << buf.size() << "'" << std::endl;
+    std::cout << "Current Pointer After '" << current_pointer << "'" << std::endl;
     if (current_pointer >= buf.size()) return;
     uint32_t net_index = *reinterpret_cast<uint32_t*>(&buf[current_pointer]);
+    std::cout << "Net index '" << net_index << "'" << std::endl;
 
     // Create test pad shapes based on width and height
     float width = static_cast<float>(width_raw) / 10000.0f;
     float height = static_cast<float>(height_raw) / 10000.0f;
 
-    std::cout << "Test Pad Height '" << height << "' Width '" << width << "' Rotation '" << pin_rotation << "'" << std::endl;
+    
 
     BRDPoint test_pad_pos;
     test_pad_pos.x = static_cast<int>(static_cast<double>(x_origin / 10000.0));
