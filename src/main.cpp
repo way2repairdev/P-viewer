@@ -21,7 +21,7 @@
 
 class PCBViewerApp {
 public:
-    PCBViewerApp() : window(1200, 800, "PCB Viewer - XZZPCB Format") {
+    PCBViewerApp() : window(1200, 800, "W2R Schematic Viewer") {
     }
     
     // Static callback for scroll events
