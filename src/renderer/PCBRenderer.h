@@ -38,6 +38,17 @@ struct RenderSettings {
     } background_color;
 };
 
+// Structure to hold part name rendering information
+struct PartNameInfo {
+    ImVec2 position;
+    ImVec2 size;
+    std::string text;
+    ImU32 color;
+    ImVec2 clip_min;
+    ImVec2 clip_max;
+    ImU32 background_color;
+};
+
 class PCBRenderer {
 public:
     PCBRenderer();
@@ -56,6 +67,7 @@ public:
     void RenderCirclesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
+    void RenderPartNamesOnTop(ImDrawList* draw_list);  // Render collected part names on top
     
     // Camera controls
     void SetCamera(float x, float y, float zoom);
@@ -91,6 +103,9 @@ private:
     // Selection state
     int selected_pin_index = -1;  // -1 means no selection
     int hovered_pin_index = -1;   // -1 means no hover
+    
+    // Part name rendering (collected during rendering, drawn on top)
+    std::vector<PartNameInfo> part_names_to_render;
     
     // Shader compilation
     bool CreateShaderProgram();

@@ -151,6 +151,9 @@ void PCBRenderer::Render(int window_width, int window_height) {
     RenderOvalsImGui(draw_list, zoom, offset_x, offset_y);
     //RenderPinsImGui(draw_list, zoom, offset_x, offset_y);
 
+    // Render part names on top of all other graphics
+    RenderPartNamesOnTop(draw_list);
+
     ImGui::End();
 }
 
@@ -297,7 +300,7 @@ GLuint PCBRenderer::CompileShader(const char* source, GLenum type) {
 //     GLint alpha_loc = glGetUniformLocation(shader_program, "alpha");
 //     glUniform1f(alpha_loc, settings.outline_alpha);
 
-//     // Render outline segments
+    // Render outline segments
 //     for (const auto& segment : pcb_data->outline_segments) {
 //         DrawLine(static_cast<float>(segment.first.x), static_cast<float>(segment.first.y),
 //                 static_cast<float>(segment.second.x), static_cast<float>(segment.second.y),
@@ -601,6 +604,9 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         return;
     }
 
+    // Clear part names collection for this frame
+    part_names_to_render.clear();
+
     // Parts rendering
     
     for (size_t i = 0; i < pcb_data->parts.size(); ++i) {
@@ -660,18 +666,17 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                         
                         ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
                         
-                        // Clip text rendering to component boundaries
-                        draw_list->PushClipRect(ImVec2(x1, y1), ImVec2(x2, y2), true);
+                        // Collect part name info for rendering on top later
+                        PartNameInfo part_name_info;
+                        part_name_info.text = part.name;
+                        part_name_info.position = text_pos;
+                        part_name_info.color = IM_COL32(255, 255, 255, 255);
+                        part_name_info.clip_min = ImVec2(x1, y1);
+                        part_name_info.clip_max = ImVec2(x2, y2);
+                        part_name_info.background_color = IM_COL32(0, 0, 0, 0);  // Transparent background
+                        part_name_info.size = text_size;
                         
-                        // Add text background for better readability
-                        ImVec2 bg_min = ImVec2(text_pos.x - 1, text_pos.y);
-                        ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 1, text_pos.y + text_size.y);
-                        draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
-                        
-                        draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
-                        
-                        // Restore clipping
-                        draw_list->PopClipRect();
+                        part_names_to_render.push_back(part_name_info);
                     }
                 }
             }
@@ -772,18 +777,17 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                 
                 ImVec2 text_pos(text_x - text_size.x * 0.5f, text_y - text_size.y * 0.5f);
                 
-                // Clip text rendering to component boundaries
-                draw_list->PushClipRect(ImVec2(x1, y1), ImVec2(x2, y2), true);
+                // Collect part name info for rendering on top later
+                PartNameInfo part_name_info;
+                part_name_info.text = part.name;
+                part_name_info.position = text_pos;
+                part_name_info.color = IM_COL32(255, 255, 255, 255);
+                part_name_info.clip_min = ImVec2(x1, y1);
+                part_name_info.clip_max = ImVec2(x2, y2);
+                part_name_info.background_color = IM_COL32(0, 0, 0, 0);  // Transparent background
+                part_name_info.size = text_size;
                 
-                // Add text background for better readability
-                ImVec2 bg_min = ImVec2(text_pos.x - 1, text_pos.y);
-                ImVec2 bg_max = ImVec2(text_pos.x + text_size.x + 1, text_pos.y + text_size.y);
-                draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(0, 0, 0, 120));
-                
-                draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), part.name.c_str());
-                
-                // Restore clipping
-                draw_list->PopClipRect();
+                part_names_to_render.push_back(part_name_info);
             }
         }
     }
@@ -1358,4 +1362,28 @@ void PCBRenderer::WorldToScreen(float world_x, float world_y, float& screen_x, f
     // Convert world coordinates to screen coordinates using camera transform
     screen_x = (world_x - camera.x) * camera.zoom + window_width * 0.5f;
     screen_y = window_height * 0.5f - (world_y - camera.y) * camera.zoom;
+}
+
+void PCBRenderer::RenderPartNamesOnTop(ImDrawList* draw_list) {
+    // Render all collected part names on top of all other graphics
+    for (const auto& part_name_info : part_names_to_render) {
+        // Clip text rendering to component boundaries
+        draw_list->PushClipRect(part_name_info.clip_min, part_name_info.clip_max, true);
+        
+        // Add text background only if it's not transparent
+        if ((part_name_info.background_color & 0xFF) > 0) {  // Check alpha channel
+            ImVec2 bg_min = ImVec2(part_name_info.position.x - 1, part_name_info.position.y);
+            ImVec2 bg_max = ImVec2(part_name_info.position.x + part_name_info.size.x + 1, part_name_info.position.y + part_name_info.size.y);
+            draw_list->AddRectFilled(bg_min, bg_max, part_name_info.background_color);
+        }
+        
+        // Render the part name text
+        draw_list->AddText(part_name_info.position, part_name_info.color, part_name_info.text.c_str());
+        
+        // Restore clipping
+        draw_list->PopClipRect();
+    }
+    
+    // Clear the collection for the next frame
+    part_names_to_render.clear();
 }
