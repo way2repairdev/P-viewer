@@ -1106,8 +1106,12 @@ bool PCBRenderer::HandleMouseClick(float screen_x, float screen_y, int window_wi
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);
         
-        // Calculate pin visual radius
-        float pin_radius = std::max(3.0f, 5.0f * camera.zoom) / camera.zoom;
+        // Calculate pin visual radius using actual pin size
+        float base_pin_radius = static_cast<float>(pin.radius);
+        if (base_pin_radius < 1.0f) {
+            base_pin_radius = 5.0f; // Default fallback for very small pins
+        }
+        float pin_radius = std::max(3.0f, base_pin_radius * camera.zoom) / camera.zoom;
         
         if (distance <= pin_radius + click_radius) {
             // Pin clicked - toggle selection
@@ -1152,8 +1156,12 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);
         
-        // Calculate pin visual radius
-        float pin_radius = std::max(3.0f, 5.0f * camera.zoom) / camera.zoom;
+        // Calculate pin visual radius using actual pin size
+        float base_pin_radius = static_cast<float>(pin.radius);
+        if (base_pin_radius < 1.0f) {
+            base_pin_radius = 5.0f; // Default fallback for very small pins
+        }
+        float pin_radius = std::max(3.0f, base_pin_radius * camera.zoom) / camera.zoom;
         
         if (distance <= pin_radius + hover_radius) {
             return static_cast<int>(i);
@@ -1219,8 +1227,12 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         float x = pin.pos.x * zoom + offset_x;
         float y = offset_y - pin.pos.y * zoom;
         
-        // Calculate pin radius (same as in RenderPinsImGui)
-        float base_pin_size = 6.5f;
+        // Calculate pin radius using actual pin size
+        float base_pin_size = static_cast<float>(pin.radius);
+        // Use a minimum base size if pin radius is too small
+        if (base_pin_size < 1.0f) {
+            base_pin_size = 6.5f; // Default fallback
+        }
         float screen_pin_size = base_pin_size * zoom;
         float min_screen_size = 2.0f;
         float max_screen_size = 500.0f;
@@ -1259,17 +1271,76 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         ImVec2 net_text_size = net_name.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(net_name.c_str());
         
         // Calculate maximum text dimensions that fit in pin circle (with margin)
-        float max_text_width = pin_radius * 1.2f;  // Use 60% of diameter for width
-        float max_text_height = pin_radius * 1.2f; // Use 60% of diameter for height
+        float max_text_width = pin_radius * 1.9f;  // Use ~95% of diameter for width
+        float max_text_height = pin_radius * 1.9f; // Use ~95% of diameter for height
         
-        // Check if texts fit within the pin at normal size
-        bool show_pin_text = !pin_number.empty() && pin_text_size.x <= max_text_width;
-        bool show_net_text = !net_name.empty() && net_text_size.x <= max_text_width;
+        // Helper function to break text into multiple lines if needed
+        auto breakTextIntoLines = [&](const std::string& text, float max_width) -> std::vector<std::string> {
+            std::vector<std::string> lines;
+            if (text.empty()) return lines;
+            
+            ImVec2 text_size = ImGui::CalcTextSize(text.c_str());
+            if (text_size.x <= max_width) {
+                lines.push_back(text);
+                return lines;
+            }
+            
+            // Text is too wide, try to break it intelligently
+            std::string remaining = text;
+            while (!remaining.empty()) {
+                // Find the longest substring that fits
+                size_t best_break = 0;
+                for (size_t i = 1; i <= remaining.length(); ++i) {
+                    std::string substr = remaining.substr(0, i);
+                    ImVec2 substr_size = ImGui::CalcTextSize(substr.c_str());
+                    if (substr_size.x <= max_width) {
+                        best_break = i;
+                    } else {
+                        break;
+                    }
+                }
+                
+                if (best_break == 0) {
+                    // Even single character doesn't fit, force break
+                    best_break = 1;
+                }
+                
+                // Try to break at a better position (space, underscore, etc.)
+                if (best_break < remaining.length()) {
+                    size_t last_good_break = best_break;
+                    for (size_t j = best_break; j > 0; --j) {
+                        char c = remaining[j-1];
+                        if (c == '_' || c == '-' || c == '.' || c == ' ') {
+                            last_good_break = j;
+                            break;
+                        }
+                    }
+                    best_break = last_good_break;
+                }
+                
+                lines.push_back(remaining.substr(0, best_break));
+                remaining = remaining.substr(best_break);
+            }
+            
+            return lines;
+        };
+        
+        // Break texts into lines if needed
+        std::vector<std::string> pin_lines = breakTextIntoLines(pin_number, max_text_width);
+        std::vector<std::string> net_lines = breakTextIntoLines(net_name, max_text_width);
+        
+        // Calculate total heights for multiline text
+        float pin_text_height = pin_lines.empty() ? 0.0f : pin_lines.size() * ImGui::GetTextLineHeight();
+        float net_text_height = net_lines.empty() ? 0.0f : net_lines.size() * ImGui::GetTextLineHeight();
+        
+        // Check if texts fit within the pin
+        bool show_pin_text = !pin_lines.empty() && pin_text_height <= max_text_height;
+        bool show_net_text = !net_lines.empty() && net_text_height <= max_text_height;
         
         // If we have both texts, check if they fit stacked vertically
         if (show_pin_text && show_net_text) {
-            float text_spacing = 1.0f;
-            float total_text_height = pin_text_size.y + net_text_size.y + text_spacing;
+            float text_spacing = 2.0f;
+            float total_text_height = pin_text_height + net_text_height + text_spacing;
             if (total_text_height > max_text_height) {
                 show_net_text = false; // Disable net text if both don't fit
             }
@@ -1292,38 +1363,47 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         
         if (show_pin_text && show_net_text) {
             // Both texts - stack them vertically
-            float text_spacing = 1.0f;
-            float total_text_height = pin_text_size.y + net_text_size.y + text_spacing;
+            float text_spacing = 2.0f;
+            float total_text_height = pin_text_height + net_text_height + text_spacing;
             
-            // Position pin number at TOP of circle (WHITE text for better contrast)
-            ImVec2 pin_text_pos(
-                x - pin_text_size.x * 0.5f, 
-                y - total_text_height * 0.5f
-            );
-            draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), pin_number.c_str());
+            // Position pin number lines at TOP of circle (WHITE text for better contrast)
+            float current_y = y - total_text_height * 0.5f;
+            for (const auto& line : pin_lines) {
+                ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
+                ImVec2 pin_text_pos(x - line_size.x * 0.5f, current_y);
+                draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), line.c_str());
+                current_y += ImGui::GetTextLineHeight();
+            }
             
-            // Position net name at BOTTOM of circle (YELLOW text for visibility)
-            ImVec2 net_text_pos(
-                x - net_text_size.x * 0.5f, 
-                y - total_text_height * 0.5f + pin_text_size.y + text_spacing
-            );
-            draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), net_name.c_str());
+            current_y += text_spacing;
+            
+            // Position net name lines at BOTTOM of circle (YELLOW text for visibility)
+            for (const auto& line : net_lines) {
+                ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
+                ImVec2 net_text_pos(x - line_size.x * 0.5f, current_y);
+                draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), line.c_str());
+                current_y += ImGui::GetTextLineHeight();
+            }
         }
         else if (show_pin_text) {
             // Only pin number - center it
-            ImVec2 pin_text_pos(
-                x - pin_text_size.x * 0.5f, 
-                y - pin_text_size.y * 0.5f
-            );
-            draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), pin_number.c_str());
+            float current_y = y - pin_text_height * 0.5f;
+            for (const auto& line : pin_lines) {
+                ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
+                ImVec2 pin_text_pos(x - line_size.x * 0.5f, current_y);
+                draw_list->AddText(pin_text_pos, IM_COL32(255, 255, 255, 255), line.c_str());
+                current_y += ImGui::GetTextLineHeight();
+            }
         }
         else if (show_net_text) {
             // Only net name - center it
-            ImVec2 net_text_pos(
-                x - net_text_size.x * 0.5f, 
-                y - net_text_size.y * 0.5f
-            );
-            draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), net_name.c_str());
+            float current_y = y - net_text_height * 0.5f;
+            for (const auto& line : net_lines) {
+                ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
+                ImVec2 net_text_pos(x - line_size.x * 0.5f, current_y);
+                draw_list->AddText(net_text_pos, IM_COL32(255, 255, 0, 255), line.c_str());
+                current_y += ImGui::GetTextLineHeight();
+            }
         }
         
         // Restore clipping
