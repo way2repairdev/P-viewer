@@ -49,6 +49,19 @@ struct PartNameInfo {
     ImU32 background_color;
 };
 
+// Structure to hold pin number rendering information
+struct PinNumberInfo {
+    ImVec2 position;
+    ImVec2 size;
+    std::string pin_number;
+    std::string net_name;
+    ImU32 pin_color;
+    ImU32 net_color;
+    ImU32 background_color;
+    float pin_radius;
+    bool show_background;
+};
+
 class PCBRenderer {
 public:
     PCBRenderer();
@@ -68,6 +81,7 @@ public:
     void RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderPartNamesOnTop(ImDrawList* draw_list);  // Render collected part names on top
+    void RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, float offset_x, float offset_y); // Render pin numbers as text overlays
     
     // Camera controls
     void SetCamera(float x, float y, float zoom);
@@ -107,6 +121,9 @@ private:
     // Part name rendering (collected during rendering, drawn on top)
     std::vector<PartNameInfo> part_names_to_render;
     
+    // Pin number rendering (collected during rendering, drawn on top)
+    std::vector<PinNumberInfo> pin_numbers_to_render;
+
     // Shader compilation
     bool CreateShaderProgram();
     GLuint CompileShader(const char* source, GLenum type);

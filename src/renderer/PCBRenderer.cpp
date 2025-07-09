@@ -154,6 +154,9 @@ void PCBRenderer::Render(int window_width, int window_height) {
     // Render part names on top of all other graphics
     RenderPartNamesOnTop(draw_list);
 
+    // Render pin numbers as text overlays
+    RenderPinNumbersAsText(draw_list, zoom, offset_x, offset_y);
+
     ImGui::End();
 }
 
@@ -1386,4 +1389,83 @@ void PCBRenderer::RenderPartNamesOnTop(ImDrawList* draw_list) {
     
     // Clear the collection for the next frame
     part_names_to_render.clear();
+}
+
+void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+    if (!pcb_data || pcb_data->pins.empty()) {
+        return;
+    }
+
+    // Only show pin numbers when zoomed in enough for readability
+    if (zoom < 2.0f) {
+        return;
+    }
+
+    for (size_t pin_index = 0; pin_index < pcb_data->pins.size(); ++pin_index) {
+        const auto& pin = pcb_data->pins[pin_index];
+        
+        // Transform pin coordinates to screen space with Y-axis mirroring
+        float x = pin.pos.x * zoom + offset_x;
+        float y = offset_y - pin.pos.y * zoom;
+        
+        // Calculate pin radius (same as in RenderPinsImGui)
+        float base_pin_size = 6.5f;
+        float screen_pin_size = base_pin_size * zoom;
+        float min_screen_size = 2.0f;
+        float max_screen_size = 500.0f;
+        float pin_radius = std::max(min_screen_size, std::min(max_screen_size, screen_pin_size));
+        
+        // Only show text if pin is large enough for crisp text rendering
+        if (pin_radius < 12.0f) {
+            continue;
+        }
+        
+        // Get pin number
+        std::string pin_number = "";
+        if (!pin.snum.empty()) {
+            pin_number = pin.snum;
+        } else if (!pin.name.empty()) {
+            pin_number = pin.name;
+        }
+        
+        // Skip if no pin number available
+        if (pin_number.empty()) {
+            continue;
+        }
+        
+        // Calculate base text size
+        ImVec2 base_text_size = ImGui::CalcTextSize(pin_number.c_str());
+        
+        // Calculate maximum text dimensions that fit in pin circle (with margin)
+        float max_text_width = pin_radius * 1.2f;  // Use 60% of diameter for width
+        float max_text_height = pin_radius * 1.2f; // Use 60% of diameter for height
+        
+        // Only show text if it fits within the pin at normal size
+        if (base_text_size.x > max_text_width || base_text_size.y > max_text_height) {
+            continue;
+        }
+        
+        // Use the actual text size for positioning
+        ImVec2 text_size = base_text_size;
+        
+        // Position text centered on pin location
+        ImVec2 text_pos(
+            x - text_size.x * 0.5f,
+            y - text_size.y * 0.5f
+        );
+        
+        // Clip text rendering to pin circle to ensure it stays inside
+        draw_list->PushClipRect(
+            ImVec2(x - pin_radius, y - pin_radius), 
+            ImVec2(x + pin_radius, y + pin_radius), 
+            true
+        );
+        
+        // Draw text with white color for high contrast
+        // Use ImGui's default text rendering for better quality
+        draw_list->AddText(text_pos, IM_COL32(255, 255, 255, 255), pin_number.c_str());
+        
+        // Restore clipping
+        draw_list->PopClipRect();
+    }
 }
