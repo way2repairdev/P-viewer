@@ -146,9 +146,9 @@ void PCBRenderer::Render(int window_width, int window_height) {
     }    // Use structured ImGui rendering methods (like original OpenBoardView)
     RenderOutlineImGui(draw_list, zoom, offset_x, offset_y);
     RenderPartsImGui(draw_list, zoom, offset_x, offset_y);
-    RenderCirclesImGui(draw_list, zoom, offset_x, offset_y);
-    RenderRectanglesImGui(draw_list, zoom, offset_x, offset_y);
-    RenderOvalsImGui(draw_list, zoom, offset_x, offset_y);
+    RenderCirclePinsImGui(draw_list, zoom, offset_x, offset_y);
+    RenderRectanglePinsImGui(draw_list, zoom, offset_x, offset_y);
+    RenderOvalPinsImGui(draw_list, zoom, offset_x, offset_y);
 
     // Render part names on top of all other graphics
     RenderPartNamesOnTop(draw_list);
@@ -797,7 +797,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
     // Parts rendering complete
 }
 
-void PCBRenderer::RenderCirclesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+void PCBRenderer::RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->circles.empty()) {
         return;
     }
@@ -836,7 +836,7 @@ void PCBRenderer::RenderCirclesImGui(ImDrawList* draw_list, float zoom, float of
     }
 }
 
-void PCBRenderer::RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+void PCBRenderer::RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->rectangles.empty()) {
         return;
     }
@@ -921,7 +921,7 @@ void PCBRenderer::RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float
     }
 }
 
-void PCBRenderer::RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+void PCBRenderer::RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
     if (!pcb_data || pcb_data->ovals.empty()) {
         return;
     }

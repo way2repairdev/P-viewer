@@ -76,9 +76,9 @@ public:
     // ImGui-based rendering methods (like original OpenBoardView)
     void RenderOutlineImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderPartsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
-    void RenderCirclesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
-    void RenderRectanglesImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
-    void RenderOvalsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
+    void RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
+    void RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
+    void RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderPartNamesOnTop(ImDrawList* draw_list);  // Render collected part names on top
     void RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, float offset_x, float offset_y); // Render pin numbers as text overlays
     
