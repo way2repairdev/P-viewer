@@ -670,7 +670,7 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
     if (pin_shape == 1) {
         // Create circle for test pad when width equals height
         float radius = width / 2.0f;
-        BRDCircle circle(test_pad_pos, radius, 0.0f, 1.0f, 0.0f, 1.0f); // Green color for test pads
+        BRDCircle circle(test_pad_pos, radius, 1.0f, 0.0f, 0.0f, 1.0f); // Green color for test pads
         circles.push_back(circle);
         
         //std::cout << "DEBUG: Added circle test pad '" << name << "' at (" << test_pad_pos.x << ", " << test_pad_pos.y 
@@ -679,7 +679,7 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
 
         
         // Create rectangle for test pad when width differs from height
-        BRDRectangle rectangle(test_pad_pos, width, height, static_cast<float>(pin_rotation), 0.0f, 1.0f, 0.0f, 1.0f); // Green color for test pads
+        BRDRectangle rectangle(test_pad_pos, width, height, static_cast<float>(pin_rotation), 1.0f, 0.0f, 0.0f, 1.0f); // Green color for test pads
         rectangles.push_back(rectangle);
         
         //std::cout << "DEBUG: Added rectangle test pad '" << name << "' at (" << test_pad_pos.x << ", " << test_pad_pos.y 

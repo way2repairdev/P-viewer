@@ -814,12 +814,26 @@ void PCBRenderer::RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float
         // Ensure minimum visibility
         if (radius < 1.0f) radius = 1.0f;
         
+        // Check if this circle corresponds to a ground pin and override color
+        float r = circle.r, g = circle.g, b = circle.b, a = circle.a;
+        
+        // Find the pin at this position to check if it's a ground pin
+        for (const auto& pin : pcb_data->pins) {
+            if (pin.pos.x == circle.center.x && pin.pos.y == circle.center.y) {
+                if (IsGroundPin(pin)) {
+                    // Use grey color for ground pins
+                    r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
+                }
+                break;
+            }
+        }
+        
         // Convert color components to ImU32 format (0-255 range)
         ImU32 fill_color = IM_COL32(
-            (int)(circle.r * 255), 
-            (int)(circle.g * 255), 
-            (int)(circle.b * 255), 
-            (int)(circle.a * 255)
+            (int)(r * 255), 
+            (int)(g * 255), 
+            (int)(b * 255), 
+            (int)(a * 255)
         );
         
         // Draw filled circle
@@ -827,9 +841,9 @@ void PCBRenderer::RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float
         
         // Optional: Add a darker outline for better visibility
         ImU32 outline_color = IM_COL32(
-            (int)(circle.r * 180), 
-            (int)(circle.g * 180), 
-            (int)(circle.b * 180), 
+            (int)(r * 180), 
+            (int)(g * 180), 
+            (int)(b * 180), 
             255
         );
         draw_list->AddCircle(ImVec2(x, y), radius, outline_color, 0, 1.0f);
@@ -855,12 +869,26 @@ void PCBRenderer::RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, fl
         if (width < 2.0f) width = 2.0f;
         if (height < 2.0f) height = 2.0f;
         
+        // Check if this rectangle corresponds to a ground pin and override color
+        float r = rectangle.r, g = rectangle.g, b = rectangle.b, a = rectangle.a;
+        
+        // Find the pin at this position to check if it's a ground pin
+        for (const auto& pin : pcb_data->pins) {
+            if (pin.pos.x == rectangle.center.x && pin.pos.y == rectangle.center.y) {
+                if (IsGroundPin(pin)) {
+                    // Use grey color for ground pins
+                    r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
+                }
+                break;
+            }
+        }
+        
         // Convert color components to ImU32 format (0-255 range)
         ImU32 fill_color = IM_COL32(
-            (int)(rectangle.r * 255), 
-            (int)(rectangle.g * 255), 
-            (int)(rectangle.b * 255), 
-            (int)(rectangle.a * 255)
+            (int)(r * 255), 
+            (int)(g * 255), 
+            (int)(b * 255), 
+            (int)(a * 255)
         );
         
         if (rectangle.rotation == 0.0f) {
@@ -875,9 +903,9 @@ void PCBRenderer::RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, fl
             
             // Optional: Add outline for better visibility
             ImU32 outline_color = IM_COL32(
-                (int)(rectangle.r * 180), 
-                (int)(rectangle.g * 180), 
-                (int)(rectangle.b * 180), 
+                (int)(r * 180), 
+                (int)(g * 180), 
+                (int)(b * 180), 
                 255
             );
             draw_list->AddRect(top_left, bottom_right, outline_color, 0.0f, 0, 1.0f);
@@ -911,9 +939,9 @@ void PCBRenderer::RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, fl
             
             // Optional: Add outline for better visibility
             ImU32 outline_color = IM_COL32(
-                (int)(rectangle.r * 180), 
-                (int)(rectangle.g * 180), 
-                (int)(rectangle.b * 180), 
+                (int)(r * 180), 
+                (int)(g * 180), 
+                (int)(b * 180), 
                 255
             );
             draw_list->AddQuad(corners[0], corners[1], corners[2], corners[3], outline_color, 1.0f);
@@ -940,12 +968,26 @@ void PCBRenderer::RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float o
         if (width < 2.0f) width = 2.0f;
         if (height < 2.0f) height = 2.0f;
         
+        // Check if this oval corresponds to a ground pin and override color
+        float r = oval.r, g = oval.g, b = oval.b, a = oval.a;
+        
+        // Find the pin at this position to check if it's a ground pin
+        for (const auto& pin : pcb_data->pins) {
+            if (pin.pos.x == oval.center.x && pin.pos.y == oval.center.y) {
+                if (IsGroundPin(pin)) {
+                    // Use grey color for ground pins
+                    r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
+                }
+                break;
+            }
+        }
+        
         // Convert color components to ImU32 format (0-255 range)
         ImU32 fill_color = IM_COL32(
-            (int)(oval.r * 255), 
-            (int)(oval.g * 255), 
-            (int)(oval.b * 255), 
-            (int)(oval.a * 255)
+            (int)(r * 255), 
+            (int)(g * 255), 
+            (int)(b * 255), 
+            (int)(a * 255)
         );
         
         // Stadium shape: rectangle with semicircular ends
@@ -1029,9 +1071,9 @@ void PCBRenderer::RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float o
             
             // Optional: Add outline for better visibility
             ImU32 outline_color = IM_COL32(
-                (int)(oval.r * 180), 
-                (int)(oval.g * 180), 
-                (int)(oval.b * 180), 
+                (int)(r * 180), 
+                (int)(g * 180), 
+                (int)(b * 180), 
                 255
             );
             
