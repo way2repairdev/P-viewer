@@ -814,13 +814,19 @@ void PCBRenderer::RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float
         // Ensure minimum visibility
         if (radius < 1.0f) radius = 1.0f;
         
-        // Check if this circle corresponds to a ground pin and override color
+        // Check if this circle corresponds to a ground pin or selected pin and override color
         float r = circle.r, g = circle.g, b = circle.b, a = circle.a;
-        
-        // Find the pin at this position to check if it's a ground pin
-        for (const auto& pin : pcb_data->pins) {
+        std::string selected_net;
+        if (selected_pin_index >= 0 && selected_pin_index < (int)pcb_data->pins.size()) {
+            selected_net = pcb_data->pins[selected_pin_index].net;
+        }
+        for (size_t pin_idx = 0; pin_idx < pcb_data->pins.size(); ++pin_idx) {
+            const auto& pin = pcb_data->pins[pin_idx];
             if (pin.pos.x == circle.center.x && pin.pos.y == circle.center.y) {
-                if (IsGroundPin(pin)) {
+                if (!selected_net.empty() && pin.net == selected_net) {
+                    // Highlight all pins on the same net
+                    r = 1.0f; g = 1.0f; b = 0.7f; a = 1.0f;
+                } else if (IsGroundPin(pin)) {
                     // Use grey color for ground pins
                     r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
                 }
@@ -869,13 +875,19 @@ void PCBRenderer::RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, fl
         if (width < 2.0f) width = 2.0f;
         if (height < 2.0f) height = 2.0f;
         
-        // Check if this rectangle corresponds to a ground pin and override color
+        // Check if this rectangle corresponds to a ground pin or selected pin and override color
         float r = rectangle.r, g = rectangle.g, b = rectangle.b, a = rectangle.a;
-        
-        // Find the pin at this position to check if it's a ground pin
-        for (const auto& pin : pcb_data->pins) {
+        std::string selected_net;
+        if (selected_pin_index >= 0 && selected_pin_index < (int)pcb_data->pins.size()) {
+            selected_net = pcb_data->pins[selected_pin_index].net;
+        }
+        for (size_t pin_idx = 0; pin_idx < pcb_data->pins.size(); ++pin_idx) {
+            const auto& pin = pcb_data->pins[pin_idx];
             if (pin.pos.x == rectangle.center.x && pin.pos.y == rectangle.center.y) {
-                if (IsGroundPin(pin)) {
+                if (!selected_net.empty() && pin.net == selected_net) {
+                    // Highlight all pins on the same net
+                    r = 1.0f; g = 1.0f; b = 0.7f; a = 1.0f;
+                } else if (IsGroundPin(pin)) {
                     // Use grey color for ground pins
                     r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
                 }
@@ -968,13 +980,19 @@ void PCBRenderer::RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float o
         if (width < 2.0f) width = 2.0f;
         if (height < 2.0f) height = 2.0f;
         
-        // Check if this oval corresponds to a ground pin and override color
+        // Check if this oval corresponds to a ground pin or selected pin and override color
         float r = oval.r, g = oval.g, b = oval.b, a = oval.a;
-        
-        // Find the pin at this position to check if it's a ground pin
-        for (const auto& pin : pcb_data->pins) {
+        std::string selected_net;
+        if (selected_pin_index >= 0 && selected_pin_index < (int)pcb_data->pins.size()) {
+            selected_net = pcb_data->pins[selected_pin_index].net;
+        }
+        for (size_t pin_idx = 0; pin_idx < pcb_data->pins.size(); ++pin_idx) {
+            const auto& pin = pcb_data->pins[pin_idx];
             if (pin.pos.x == oval.center.x && pin.pos.y == oval.center.y) {
-                if (IsGroundPin(pin)) {
+                if (!selected_net.empty() && pin.net == selected_net) {
+                    // Highlight all pins on the same net
+                    r = 1.0f; g = 1.0f; b = 0.7f; a = 1.0f;
+                } else if (IsGroundPin(pin)) {
                     // Use grey color for ground pins
                     r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
                 }
