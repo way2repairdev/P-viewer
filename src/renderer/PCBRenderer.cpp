@@ -611,16 +611,27 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
 
     // Parts rendering
     
+    int selected_part_index = -1;
+    if (selected_pin_index >= 0 && selected_pin_index < (int)pcb_data->pins.size()) {
+        selected_part_index = pcb_data->pins[selected_pin_index].part - 1; // parts are 1-indexed
+    }
+
+    // Determine selected net (if any)
+    std::string selected_net;
+    if (selected_pin_index >= 0 && selected_pin_index < (int)pcb_data->pins.size()) {
+        selected_net = pcb_data->pins[selected_pin_index].net;
+    }
+
     for (size_t i = 0; i < pcb_data->parts.size(); ++i) {
         const auto& part = pcb_data->parts[i];
-        
         // Get pins for this part
         std::vector<BRDPin> part_pins;
         for (const auto& pin : pcb_data->pins) {
             if (pin.part == i + 1) { // Parts are 1-indexed
                 part_pins.push_back(pin);
             }
-        }        if (part_pins.empty()) {
+        }
+        if (part_pins.empty()) {
             // Draw a simple rectangle for parts with no pins using part bounds
             float x1 = part.p1.x * zoom + offset_x;
             float y1 = offset_y - part.p1.y * zoom;  // Mirror Y
@@ -701,6 +712,27 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         float y1 = offset_y - (min_y - margin) * zoom;  // Mirror Y
         float x2 = (max_x + margin) * zoom + offset_x;
         float y2 = offset_y - (max_y + margin) * zoom;  // Mirror Y
+
+        // Highlight selected part with a light yellow filter
+        if ((int)i == selected_part_index) {
+            ImU32 highlight_color = IM_COL32(255, 255, 180, 100); // Light yellow, semi-transparent
+            draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), highlight_color);
+        }
+
+        // Highlight all parts with at least one pin on the selected net (top layer)
+        if (!selected_net.empty()) {
+            bool highlight_this_part = false;
+            for (const auto& pin : part_pins) {
+                if (pin.net == selected_net) {
+                    highlight_this_part = true;
+                    break;
+                }
+            }
+            if (highlight_this_part) {
+                ImU32 highlight_color = IM_COL32(255, 255, 180, 80); // Light yellow, semi-transparent
+                draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), highlight_color);
+            }
+        }
         
         // Ensure correct rectangle coordinates after Y mirroring
         if (y1 > y2) std::swap(y1, y2);
