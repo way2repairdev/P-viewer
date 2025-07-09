@@ -655,7 +655,7 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
                 float component_outline_thickness = std::max(1.0f, std::min(3.0f, zoom * 2.0f));
                 
                 // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
-                // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);                // Add component label - only if text fits completely inside component
+                // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);                // Add component label - only if text fits completely inside component and not a single-pin component
                 float component_screen_size = std::max(x2 - x1, y2 - y1);
                 if (component_screen_size > 30.0f && !part.name.empty()) {
                     ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
@@ -766,9 +766,9 @@ void PCBRenderer::RenderPartsImGui(ImDrawList* draw_list, float zoom, float offs
         float component_outline_thickness = std::max(1.0f, std::min(3.0f, zoom * 2.0f));  // Thicker when zoomed in        // draw_list->AddRectFilled(ImVec2(x1, y1), ImVec2(x2, y2), part_fill_color);
         // draw_list->AddRect(ImVec2(x1, y1), ImVec2(x2, y2), part_outline_color, 0.0f, 0, component_outline_thickness);
         
-        // Add part name - only if text fits completely inside component
+        // Add part name - only if text fits completely inside component and part has more than one pin
         float component_screen_size = std::max(x2 - x1, y2 - y1);
-        if (component_screen_size > 30.0f && !part.name.empty()) {
+        if (component_screen_size > 30.0f && !part.name.empty() && pin_count > 1) {
             ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
             
             // Check if text fits inside component with margin
