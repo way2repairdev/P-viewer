@@ -525,7 +525,7 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                             float radius = diameter / 2.0f;
                             
                             // Create circle with red fill color at pin position
-                            BRDCircle circle(pin.pos, radius, 1.0f, 0.0f, 0.0f, 1.0f); // Red color (R=1.0, G=0.0, B=0.0, A=1.0)
+                            BRDCircle circle(pin.pos, radius, 0.7f, 0.0f, 0.0f, 1.0f); // Red color (R=1.0, G=0.0, B=0.0, A=1.0)
                             circles.push_back(circle);
                             
                             //std::cout << "DEBUG: Added circle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
@@ -542,7 +542,7 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                             float width = static_cast<float>(width_raw) / 10000.0f;
                             
                             // Create oval with red fill color at pin position
-                            BRDOval oval(pin.pos, width, height, static_cast<float>(pin_rotation), 1.0f, 0.0f, 0.0f, 1.0f); // Red color
+                            BRDOval oval(pin.pos, width, height, static_cast<float>(pin_rotation), 0.7f, 0.0f, 0.0f, 1.0f); // Red color
                             ovals.push_back(oval);
                             
                             //std::cout << "DEBUG: Added oval for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
@@ -564,7 +564,7 @@ void XZZPCBFile::ParsePartBlockOriginal(std::vector<char>& buf) {
                             float width = static_cast<float>(width_raw) / 10000.0f;
                             
                             // Create rectangle with red fill color at pin position
-                            BRDRectangle rectangle(pin.pos, width, height, static_cast<float>(pin_rotation), 1.0f, 0.0f, 0.0f, 1.0f); // Red color
+                            BRDRectangle rectangle(pin.pos, width, height, static_cast<float>(pin_rotation), 0.7f, 0.0f, 0.0f, 1.0f); // Red color
                             rectangles.push_back(rectangle);
                             
                             //std::cout << "DEBUG: Added rectangle for pin '" << pin_name << "' at (" << pin.pos.x << ", " << pin.pos.y 
@@ -670,7 +670,7 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
     if (pin_shape == 1) {
         // Create circle for test pad when width equals height
         float radius = width / 2.0f;
-        BRDCircle circle(test_pad_pos, radius, 1.0f, 0.0f, 0.0f, 1.0f); // Green color for test pads
+        BRDCircle circle(test_pad_pos, radius, 0.7f, 0.0f, 0.0f, 1.0f); // Green color for test pads
         circles.push_back(circle);
         
         //std::cout << "DEBUG: Added circle test pad '" << name << "' at (" << test_pad_pos.x << ", " << test_pad_pos.y 
@@ -679,7 +679,7 @@ void XZZPCBFile::ParseTestPadBlockOriginal(std::vector<uint8_t>& buf) {
 
         
         // Create rectangle for test pad when width differs from height
-        BRDRectangle rectangle(test_pad_pos, width, height, static_cast<float>(pin_rotation), 1.0f, 0.0f, 0.0f, 1.0f); // Green color for test pads
+        BRDRectangle rectangle(test_pad_pos, width, height, static_cast<float>(pin_rotation), 0.7f, 0.0f, 0.0f, 1.0f); // Green color for test pads
         rectangles.push_back(rectangle);
         
         //std::cout << "DEBUG: Added rectangle test pad '" << name << "' at (" << test_pad_pos.x << ", " << test_pad_pos.y 

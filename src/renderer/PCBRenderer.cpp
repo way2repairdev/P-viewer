@@ -826,6 +826,9 @@ void PCBRenderer::RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float
                 if (!selected_net.empty() && pin.net == selected_net) {
                     // Highlight all pins on the same net
                     r = 1.0f; g = 1.0f; b = 0.7f; a = 1.0f;
+                } else if (IsNCPin(pin)) {
+                    // Use blue color for NC pins
+                    r = 0.0f; g = 0.3f; b = 0.3f; a = 1.0f;
                 } else if (IsGroundPin(pin)) {
                     // Use grey color for ground pins
                     r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
@@ -887,6 +890,9 @@ void PCBRenderer::RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, fl
                 if (!selected_net.empty() && pin.net == selected_net) {
                     // Highlight all pins on the same net
                     r = 1.0f; g = 1.0f; b = 0.7f; a = 1.0f;
+                } else if (IsNCPin(pin)) {
+                    // Use blue color for NC pins
+                    r = 0.0f; g = 0.3f; b = 0.3f; a = 1.0f;
                 } else if (IsGroundPin(pin)) {
                     // Use grey color for ground pins
                     r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
@@ -992,6 +998,9 @@ void PCBRenderer::RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float o
                 if (!selected_net.empty() && pin.net == selected_net) {
                     // Highlight all pins on the same net
                     r = 1.0f; g = 1.0f; b = 0.7f; a = 1.0f;
+                } else if (IsNCPin(pin)) {
+                    // Use blue color for NC pins
+                    r = 0.0f; g = 0.3f; b = 0.3f; a = 1.0f;
                 } else if (IsGroundPin(pin)) {
                     // Use grey color for ground pins
                     r = 0.5f; g = 0.5f; b = 0.5f; a = 1.0f;
