@@ -75,7 +75,6 @@ public:
     
     // ImGui-based rendering methods (like original OpenBoardView)
     void RenderOutlineImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
-    void RenderPartsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderRectanglePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
