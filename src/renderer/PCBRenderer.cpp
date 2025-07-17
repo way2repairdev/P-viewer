@@ -149,6 +149,9 @@ void PCBRenderer::Render(int window_width, int window_height) {
     RenderRectanglePinsImGui(draw_list, zoom, offset_x, offset_y);
     RenderOvalPinsImGui(draw_list, zoom, offset_x, offset_y);
 
+    // Collect part names for rendering on top
+    CollectPartNamesForRendering(zoom, offset_x, offset_y);
+
     // Render part names on top of all other graphics
     RenderPartNamesOnTop(draw_list);
 
@@ -1070,7 +1073,7 @@ void PCBRenderer::RenderPartNamesOnTop(ImDrawList* draw_list) {
             draw_list->AddRectFilled(bg_min, bg_max, part_name_info.background_color);
         }
         
-        // Render the part name text
+        // Render the part name text (no scaling - text already fits within bounds)
         draw_list->AddText(part_name_info.position, part_name_info.color, part_name_info.text.c_str());
         
         // Restore clipping
@@ -1079,6 +1082,141 @@ void PCBRenderer::RenderPartNamesOnTop(ImDrawList* draw_list) {
     
     // Clear the collection for the next frame
     part_names_to_render.clear();
+}
+
+void PCBRenderer::CollectPartNamesForRendering(float zoom, float offset_x, float offset_y) {
+    if (!pcb_data || pcb_data->parts.empty()) {
+        return;
+    }
+
+    // Only show part names when zoomed in enough for readability
+    if (zoom < 0.3f) {
+        return;
+    }
+
+    // Clear any existing part names from previous frame
+    part_names_to_render.clear();
+
+    for (size_t part_index = 0; part_index < pcb_data->parts.size(); ++part_index) {
+        const auto& part = pcb_data->parts[part_index];
+        
+        // Skip parts without names
+        if (part.name.empty()) {
+            continue;
+        }
+
+        // Get pins for this part to calculate bounds
+        std::vector<BRDPin> part_pins;
+        for (const auto& pin : pcb_data->pins) {
+            if (pin.part == part_index + 1) { // Parts are 1-indexed
+                part_pins.push_back(pin);
+            }
+        }
+
+        if (part_pins.empty()) {
+            // Use part bounds if no pins
+            float center_x = (part.p1.x + part.p2.x) * 0.5f;
+            float center_y = (part.p1.y + part.p2.y) * 0.5f;
+            
+            // Transform to screen coordinates
+            float screen_x = center_x * zoom + offset_x;
+            float screen_y = offset_y - center_y * zoom;
+            
+            // Calculate text size
+            ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
+            
+            // Check if text fits within part bounds
+            float part_width = std::abs(part.p2.x - part.p1.x) * zoom;
+            float part_height = std::abs(part.p2.y - part.p1.y) * zoom;
+            
+            // Only show if text fits completely within the part boundaries
+            if (text_size.x > part_width || text_size.y > part_height) {
+                continue; // Skip if text doesn't fit
+            }
+            
+            PartNameInfo info;
+            info.text = part.name;
+            info.position = ImVec2(screen_x - text_size.x * 0.5f, screen_y - text_size.y * 0.5f);
+            info.size = text_size;
+            info.color = IM_COL32(255, 255, 255, 255); // White text
+            info.background_color = IM_COL32(0, 0, 0, 128); // Semi-transparent black background
+            
+            // Set clipping bounds (use part bounds)
+            float min_x = part.p1.x * zoom + offset_x;
+            float max_x = part.p2.x * zoom + offset_x;
+            float min_y = offset_y - part.p2.y * zoom;
+            float max_y = offset_y - part.p1.y * zoom;
+            
+            info.clip_min = ImVec2(min_x, min_y);
+            info.clip_max = ImVec2(max_x, max_y);
+            
+            part_names_to_render.push_back(info);
+            continue;
+        }
+
+        // Calculate part bounds from pins
+        float min_x = part_pins[0].pos.x, max_x = part_pins[0].pos.x;
+        float min_y = part_pins[0].pos.y, max_y = part_pins[0].pos.y;
+        
+        for (const auto& pin : part_pins) {
+            min_x = std::min(min_x, static_cast<float>(pin.pos.x));
+            max_x = std::max(max_x, static_cast<float>(pin.pos.x));
+            min_y = std::min(min_y, static_cast<float>(pin.pos.y));
+            max_y = std::max(max_y, static_cast<float>(pin.pos.y));
+        }
+
+        // Add some margin around the pins
+        float margin = DeterminePinMargin(part, part_pins, 
+                                        std::sqrt((max_x - min_x) * (max_x - min_x) + (max_y - min_y) * (max_y - min_y)));
+        
+        min_x -= margin;
+        max_x += margin;
+        min_y -= margin;
+        max_y += margin;
+
+        // Calculate center position in world coordinates
+        float center_x = (min_x + max_x) * 0.5f;
+        float center_y = (min_y + max_y) * 0.5f;
+        
+        // Transform to screen coordinates
+        float screen_center_x = center_x * zoom + offset_x;
+        float screen_center_y = offset_y - center_y * zoom;
+        
+        // Calculate text size
+        ImVec2 text_size = ImGui::CalcTextSize(part.name.c_str());
+        
+        // Check if text fits within component bounds (screen coordinates)
+        float component_width = (max_x - min_x) * zoom;
+        float component_height = (max_y - min_y) * zoom;
+        
+        // Only show if text fits completely within the component boundaries
+        if (text_size.x > component_width || text_size.y > component_height) {
+            // Text too large to fit inside component, skip
+            continue;
+        }
+        
+        // Use original text size (no artificial scaling)
+        ImVec2 scaled_text_size = text_size;
+
+        PartNameInfo info;
+        info.text = part.name;
+        info.position = ImVec2(screen_center_x - scaled_text_size.x * 0.5f, screen_center_y - scaled_text_size.y * 0.5f);
+        info.size = scaled_text_size;
+        info.color = IM_COL32(255, 255, 255, 255);
+        // Semi-transparent black background for better visibility
+        info.background_color = IM_COL32(0, 0, 0, 128); // Semi-transparent black background
+        
+        // Set clipping bounds to component area
+        float screen_min_x = min_x * zoom + offset_x;
+        float screen_max_x = max_x * zoom + offset_x;
+        float screen_min_y = offset_y - max_y * zoom;
+        float screen_max_y = offset_y - min_y * zoom;
+        
+        info.clip_min = ImVec2(screen_min_x, screen_min_y);
+        info.clip_max = ImVec2(screen_max_x, screen_max_y);
+        
+        part_names_to_render.push_back(info);
+    }
 }
 
 void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {

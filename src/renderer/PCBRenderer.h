@@ -80,6 +80,7 @@ public:
     void RenderOvalPinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y);
     void RenderPartNamesOnTop(ImDrawList* draw_list);  // Render collected part names on top
     void RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, float offset_x, float offset_y); // Render pin numbers as text overlays
+    void CollectPartNamesForRendering(float zoom, float offset_x, float offset_y); // Collect part names for rendering
     
     // Camera controls
     void SetCamera(float x, float y, float zoom);
