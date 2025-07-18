@@ -1384,19 +1384,61 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         float x = pin.pos.x * zoom + offset_x;
         float y = offset_y - pin.pos.y * zoom;
         
-        // Calculate pin radius using actual pin size
-        float base_pin_size = static_cast<float>(pin.radius);
-        // Use a minimum base size if pin radius is too small
-        if (base_pin_size < 1.0f) {
-            base_pin_size = 6.5f; // Default fallback
+        // Calculate pin dimensions using the same logic as HandleMouseClick
+        float pin_width = 0.0f, pin_height = 0.0f;
+        bool is_rect = false, is_oval = false;
+        
+        // Check if this pin is a rectangle (square/rectangular pin)
+        for (const auto& rect : pcb_data->rectangles) {
+            if (rect.center.x == pin.pos.x && rect.center.y == pin.pos.y) {
+                is_rect = true;
+                pin_width = rect.width * zoom;
+                pin_height = rect.height * zoom;
+                break;
+            }
         }
-        float screen_pin_size = base_pin_size * zoom;
-        float min_screen_size = 2.0f;
-        float max_screen_size = 500.0f;
-        float pin_radius = std::max(min_screen_size, std::min(max_screen_size, screen_pin_size));
+        
+        // Check if this pin is an oval (stadium shape)
+        if (!is_rect) {
+            for (const auto& oval : pcb_data->ovals) {
+                if (oval.center.x == pin.pos.x && oval.center.y == pin.pos.y) {
+                    is_oval = true;
+                    pin_width = oval.width * zoom;
+                    pin_height = oval.height * zoom;
+                    break;
+                }
+            }
+        }
+        
+        // Otherwise, treat as circle (default)
+        float pin_radius = 0.0f;
+        if (!is_rect && !is_oval) {
+            // Find the corresponding circle data for this pin position
+            float circle_radius = static_cast<float>(pin.radius); // fallback to pin radius
+            for (const auto& circle : pcb_data->circles) {
+                if (circle.center.x == pin.pos.x && circle.center.y == pin.pos.y) {
+                    circle_radius = circle.radius;
+                    break;
+                }
+            }
+            
+            if (circle_radius < 1.0f) {
+                circle_radius = 6.5f; // Default fallback
+            }
+            pin_radius = circle_radius * zoom;
+            pin_width = pin_radius * 2.0f;
+            pin_height = pin_radius * 2.0f;
+        }
+        
+        // Ensure minimum visibility for all pin types
+        if (pin_width < 2.0f) pin_width = 2.0f;
+        if (pin_height < 2.0f) pin_height = 2.0f;
+        
+        // Calculate effective area for text fitting (use smaller dimension)
+        float effective_size = std::min(pin_width, pin_height);
         
         // Only show text if pin is large enough for crisp text rendering
-        if (pin_radius < 12.0f) {
+        if (effective_size < 12.0f) {
             continue;
         }
         
@@ -1427,9 +1469,9 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         ImVec2 pin_text_size = ImGui::CalcTextSize(pin_number.c_str());
         ImVec2 net_text_size = net_name.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(net_name.c_str());
         
-        // Calculate maximum text dimensions that fit in pin circle (with margin)
-        float max_text_width = pin_radius * 1.9f;  // Use ~95% of diameter for width
-        float max_text_height = pin_radius * 1.9f; // Use ~95% of diameter for height
+        // Calculate maximum text dimensions that fit in pin area (with margin)
+        float max_text_width = pin_width * 0.95f;   // Use ~95% of pin width for text
+        float max_text_height = pin_height * 0.95f; // Use ~95% of pin height for text
         
         // Helper function to break text into multiple lines if needed
         auto breakTextIntoLines = [&](const std::string& text, float max_width) -> std::vector<std::string> {
@@ -1511,10 +1553,12 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         // Position text centered on pin location
         ImVec2 text_pos;
         
-        // Clip text rendering to pin circle to ensure it stays inside
+        // Clip text rendering to pin area to ensure it stays inside
+        float half_width = pin_width * 0.5f;
+        float half_height = pin_height * 0.5f;
         draw_list->PushClipRect(
-            ImVec2(x - pin_radius, y - pin_radius), 
-            ImVec2(x + pin_radius, y + pin_radius), 
+            ImVec2(x - half_width, y - half_height), 
+            ImVec2(x + half_width, y + half_height), 
             true
         );
         
