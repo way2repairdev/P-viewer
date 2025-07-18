@@ -1051,12 +1051,21 @@ bool PCBRenderer::HandleMouseClick(float screen_x, float screen_y, int window_wi
         float dx = world_x - pin.pos.x;
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);
-        float base_pin_radius = static_cast<float>(pin.radius);
-        if (base_pin_radius < 1.0f) {
-            base_pin_radius = 5.0f;
+        
+        // Find the corresponding circle data for this pin position
+        float circle_radius = static_cast<float>(pin.radius); // fallback to pin radius
+        for (const auto& circle : pcb_data->circles) {
+            if (circle.center.x == pin.pos.x && circle.center.y == pin.pos.y) {
+                circle_radius = circle.radius;
+                break;
+            }
         }
-        float pin_radius = std::max(3.0f, base_pin_radius * camera.zoom) / camera.zoom;
-        if (distance <= pin_radius) {
+        
+        if (circle_radius < 1.0f) {
+            circle_radius = 5.0f;
+        }
+        
+        if (distance <= circle_radius) {
             if (selected_pin_index == static_cast<int>(i)) {
                 selected_pin_index = -1;
             } else {
@@ -1157,13 +1166,21 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
         float dx = world_x - pin.pos.x;
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);
-        float base_pin_radius = static_cast<float>(pin.radius);
-        if (base_pin_radius < 1.0f) {
-            base_pin_radius = 5.0f; // Default fallback for very small pins
-        }
-        float pin_radius = std::max(3.0f, base_pin_radius * camera.zoom) / camera.zoom;
         
-        if (distance <= pin_radius) {
+        // Find the corresponding circle data for this pin position
+        float circle_radius = static_cast<float>(pin.radius); // fallback to pin radius
+        for (const auto& circle : pcb_data->circles) {
+            if (circle.center.x == pin.pos.x && circle.center.y == pin.pos.y) {
+                circle_radius = circle.radius;
+                break;
+            }
+        }
+        
+        if (circle_radius < 1.0f) {
+            circle_radius = 5.0f; // Default fallback for very small pins
+        }
+        
+        if (distance <= circle_radius) {
             return static_cast<int>(i);
         }
     }
