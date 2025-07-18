@@ -1181,6 +1181,11 @@ void PCBRenderer::CollectPartNamesForRendering(float zoom, float offset_x, float
             }
         }
 
+        // If part has only one pin, do not show the part name
+        if (part_pins.size() == 1) {
+            continue;
+        }
+
         if (part_pins.empty()) {
             // Use part bounds if no pins
             float center_x = (part.p1.x + part.p2.x) * 0.5f;
