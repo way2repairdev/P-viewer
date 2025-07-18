@@ -1083,8 +1083,6 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
     // Convert screen coordinates to world coordinates
     float world_x, world_y;
     ScreenToWorld(screen_x, screen_y, world_x, world_y, window_width, window_height);
-      // Check if mouse is near any pin
-    float hover_radius = 15.0f / camera.zoom; // Slightly smaller than click radius
     
     for (size_t i = 0; i < pcb_data->pins.size(); ++i) {
         const auto& pin = pcb_data->pins[i];
@@ -1093,19 +1091,79 @@ int PCBRenderer::GetHoveredPin(float screen_x, float screen_y, int window_width,
         if (IsGroundPin(pin) || IsNCPin(pin)) {
             continue;
         }
-        
+
+        // Check if this pin is a rectangle (square/rectangular pin)
+        bool is_rect = false;
+        float rect_width = 0.0f, rect_height = 0.0f, rect_rotation = 0.0f;
+        // Try to find a rectangle at this pin position
+        for (const auto& rect : pcb_data->rectangles) {
+            if (rect.center.x == pin.pos.x && rect.center.y == pin.pos.y) {
+                is_rect = true;
+                rect_width = rect.width;
+                rect_height = rect.height;
+                rect_rotation = rect.rotation;
+                break;
+            }
+        }
+
+        if (is_rect) {
+            // Rectangle pin: check if mouse is inside the rectangle (with rotation)
+            float dx = world_x - pin.pos.x;
+            float dy = world_y - pin.pos.y;
+            // Undo rotation
+            float angle_rad = -rect_rotation * 3.14159265f / 180.0f;
+            float cos_a = std::cos(angle_rad);
+            float sin_a = std::sin(angle_rad);
+            float local_x = dx * cos_a - dy * sin_a;
+            float local_y = dx * sin_a + dy * cos_a;
+            float half_w = rect_width / 2.0f;
+            float half_h = rect_height / 2.0f;
+            if (std::abs(local_x) <= half_w && std::abs(local_y) <= half_h) {
+                return static_cast<int>(i);
+            }
+            continue;
+        }
+
+        // Check if this pin is an oval (stadium shape)
+        bool is_oval = false;
+        float oval_width = 0.0f, oval_height = 0.0f, oval_rotation = 0.0f;
+        for (const auto& oval : pcb_data->ovals) {
+            if (oval.center.x == pin.pos.x && oval.center.y == pin.pos.y) {
+                is_oval = true;
+                oval_width = oval.width;
+                oval_height = oval.height;
+                oval_rotation = oval.rotation;
+                break;
+            }
+        }
+        if (is_oval) {
+            // Oval pin: check if mouse is inside the rotated ellipse (approximate)
+            float dx = world_x - pin.pos.x;
+            float dy = world_y - pin.pos.y;
+            float angle_rad = -oval_rotation * 3.14159265f / 180.0f;
+            float cos_a = std::cos(angle_rad);
+            float sin_a = std::sin(angle_rad);
+            float local_x = dx * cos_a - dy * sin_a;
+            float local_y = dx * sin_a + dy * cos_a;
+            float rx = oval_width / 2.0f;
+            float ry = oval_height / 2.0f;
+            if ((local_x * local_x) / (rx * rx) + (local_y * local_y) / (ry * ry) <= 1.0f) {
+                return static_cast<int>(i);
+            }
+            continue;
+        }
+
+        // Otherwise, treat as circle (default)
         float dx = world_x - pin.pos.x;
         float dy = world_y - pin.pos.y;
         float distance = std::sqrt(dx * dx + dy * dy);
-        
-        // Calculate pin visual radius using actual pin size
         float base_pin_radius = static_cast<float>(pin.radius);
         if (base_pin_radius < 1.0f) {
             base_pin_radius = 5.0f; // Default fallback for very small pins
         }
         float pin_radius = std::max(3.0f, base_pin_radius * camera.zoom) / camera.zoom;
         
-        if (distance <= pin_radius + hover_radius) {
+        if (distance <= pin_radius) {
             return static_cast<int>(i);
         }
     }
