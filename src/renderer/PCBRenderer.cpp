@@ -145,6 +145,9 @@ void PCBRenderer::Render(int window_width, int window_height) {
         return;
     }    // Use structured ImGui rendering methods (like original OpenBoardView)
     RenderOutlineImGui(draw_list, zoom, offset_x, offset_y);
+    if (settings.show_part_outlines) {
+        RenderPartOutlineImGui(draw_list, zoom, offset_x, offset_y);
+    }
     RenderCirclePinsImGui(draw_list, zoom, offset_x, offset_y);
     RenderRectanglePinsImGui(draw_list, zoom, offset_x, offset_y);
     RenderOvalPinsImGui(draw_list, zoom, offset_x, offset_y);
@@ -600,6 +603,36 @@ void PCBRenderer::RenderOutlineImGui(ImDrawList* draw_list, float zoom, float of
     }
     
     // Outline rendering complete
+}
+
+void PCBRenderer::RenderPartOutlineImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
+    if (!pcb_data || pcb_data->part_outline_segments.empty()) {
+        return;
+    }
+
+    // Render part outlines
+    
+    // Use part outline color from settings with alpha
+    ImU32 part_outline_color = IM_COL32(
+        static_cast<int>(settings.part_outline_color.r * 255),
+        static_cast<int>(settings.part_outline_color.g * 255),
+        static_cast<int>(settings.part_outline_color.b * 255),
+        static_cast<int>(settings.part_outline_alpha * 255)
+    );
+    
+    // Adaptive line thickness based on zoom level (slightly thinner than board outline)
+    float line_thickness = std::max(0.5f, std::min(2.0f, zoom * 1.5f));
+    
+    for (const auto& segment : pcb_data->part_outline_segments) {
+        // Transform coordinates from PCB space to screen space with Y-axis mirroring
+        ImVec2 p1(segment.first.x * zoom + offset_x, offset_y - segment.first.y * zoom);
+        ImVec2 p2(segment.second.x * zoom + offset_x, offset_y - segment.second.y * zoom);
+        
+        // Draw part outline segment
+        draw_list->AddLine(p1, p2, part_outline_color, line_thickness);
+    }
+    
+    // Part outline rendering complete
 }
 
 void PCBRenderer::RenderCirclePinsImGui(ImDrawList* draw_list, float zoom, float offset_x, float offset_y) {
