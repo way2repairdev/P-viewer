@@ -1722,14 +1722,42 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
             }
         }
         
+        // Get diode reading (voltage reading) from pin comment - this is the priority display
+        std::string diode_reading = "";
+        if (!pin.comment.empty()) {
+            diode_reading = pin.comment;
+        }
+        
         // Skip if no pin number available
         if (pin_number.empty()) {
             continue;
         }
         
-        // Calculate base text sizes
+        // Calculate base text sizes (including diode reading)
         ImVec2 pin_text_size = ImGui::CalcTextSize(pin_number.c_str());
         ImVec2 net_text_size = net_name.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(net_name.c_str());
+        ImVec2 diode_text_size = diode_reading.empty() ? ImVec2(0,0) : ImGui::CalcTextSize(diode_reading.c_str());
+        
+        // **DIODE READING POSITIONING** - Position slightly above pin number
+        if (!diode_reading.empty()) {
+            // Position diode reading above the pin center with minimal spacing
+            float text_spacing = 0.2f; // Spacing between diode reading and pin number
+            float diode_y = y - (pin_height * 0.3f) - text_spacing - diode_text_size.y;
+            ImVec2 diode_pos(x - diode_text_size.x * 0.5f, diode_y);
+            
+            // Add white background rectangle for diode reading (like in the image)
+            ImVec2 bg_padding(3.0f, 1.0f); // Smaller padding for compact display
+            ImVec2 bg_min(diode_pos.x - bg_padding.x, diode_pos.y - bg_padding.y);
+            ImVec2 bg_max(diode_pos.x + diode_text_size.x + bg_padding.x, diode_pos.y + diode_text_size.y + bg_padding.y);
+            
+            // White background with slight transparency
+            draw_list->AddRectFilled(bg_min, bg_max, IM_COL32(255, 255, 255, 240));
+            // Optional: Add black border for better visibility
+            draw_list->AddRect(bg_min, bg_max, IM_COL32(0, 0, 0, 100));
+            
+            // Black text on white background for maximum contrast
+            draw_list->AddText(diode_pos, IM_COL32(0, 0, 0, 255), diode_reading.c_str());
+        }
         
         // Calculate maximum text dimensions that fit in pin area (with margin)
         float max_text_width = pin_width * 0.95f;   // Use ~95% of pin width for text
@@ -1825,12 +1853,15 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
         );
         
         if (show_pin_text && show_net_text) {
-            // Both texts - stack them vertically
+            // Both pin text and net text - stack them vertically in the center of the pin
             float text_spacing = 2.0f;
             float total_text_height = pin_text_height + net_text_height + text_spacing;
             
-            // Position pin number lines at TOP of circle (WHITE text for better contrast)
-            float current_y = y - total_text_height * 0.5f;
+            // Center the pin text stack in the pin (diode reading is separate above)
+            float pin_start_y = y - total_text_height * 0.5f;
+            
+            // Position pin number lines
+            float current_y = pin_start_y;
             for (const auto& line : pin_lines) {
                 ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
                 ImVec2 pin_text_pos(x - line_size.x * 0.5f, current_y);
@@ -1849,8 +1880,10 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
             }
         }
         else if (show_pin_text) {
-            // Only pin number - center it
-            float current_y = y - pin_text_height * 0.5f;
+            // Only pin number - center it in the pin (diode reading is separate above)
+            float pin_start_y = y - pin_text_height * 0.5f;
+            
+            float current_y = pin_start_y;
             for (const auto& line : pin_lines) {
                 ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
                 ImVec2 pin_text_pos(x - line_size.x * 0.5f, current_y);
@@ -1859,7 +1892,7 @@ void PCBRenderer::RenderPinNumbersAsText(ImDrawList* draw_list, float zoom, floa
             }
         }
         else if (show_net_text) {
-            // Only net name - center it
+            // Only net name - center it (diode reading can still be above)
             float current_y = y - net_text_height * 0.5f;
             for (const auto& line : net_lines) {
                 ImVec2 line_size = ImGui::CalcTextSize(line.c_str());
